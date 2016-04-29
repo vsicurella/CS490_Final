@@ -12,11 +12,19 @@ Synth::Synth(int SR)
     amplitude = 0.7;
     phase = 0;
 
+    playing = false;
+
     wavetable = Wavetable(SAMPLE_RATE);
+    setTone(Wavetable::SINE);
 }
 
 Synth::~Synth()
 {
+}
+
+bool Synth::isPlaying()
+{
+    return playing;
 }
 
 void Synth::setTone(unsigned int waveCode)
@@ -33,7 +41,7 @@ void Synth::clearBuffer()
 
 void Synth::playBuffer()
 {
-    frames = snd_pcm_writei(handle, buffer, CHUNK_SIZE);
+    snd_pcm_writei(handle, buffer, CHUNK_SIZE);
 
     // Clear buffer
 
@@ -47,13 +55,15 @@ void Synth::nextSample()
         abort();
 }
 
-void Synth::genChunk()
+float* Synth::genChunk()
 {
     for (int i = 0; i < CHUNK_SIZE; i++)
     {
         buffer[i] = table[0][phaseTab] * amplitude;
         nextSample();
     }
+
+    return buffer;
 }
 
 void Synth::start()

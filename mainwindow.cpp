@@ -7,16 +7,22 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    // Initialize GUI elemnts
-    ui->freqSld->setValue((int) (tone.frequency * 10000));
-    ui->freqDisplay->setValue(tone.frequency);
+    audioThread = new QThread;
+    audioHandler = new Audio(48000);
 
-    tone.setTone(Wavetable::SINE);
-    tone.start();
+    qDebug() << "From main thread: " << QThread::currentThreadId();
+
+    // Initialize GUI elements
+    ui->freqSld->setValue((int) (audioHandler->synth.frequency * 10000));
+    ui->freqDisplay->setValue(audioHandler->synth.frequency);
+
 
     QTimer *qTimer = new QTimer(this);
-    connect(qTimer,SIGNAL(timeout()),this,SLOT(playNote()));
+    connect(qTimer, SIGNAL(timeout()), audioHandler, SLOT(run()));
     qTimer->start(1);
+
+    audioHandler->moveToThread(audioThread);
+    audioThread->start();
 
 }
 
@@ -25,55 +31,35 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::playNote()
-{
-    if (ui->checkBox->isChecked())
-    {
-        tone.genChunk();
-        tone.playBuffer();
-        tone.clearBuffer();
-    }
-
-    if (state != snd_pcm_state(tone.handle))
-    {
-        state = snd_pcm_state(tone.handle);
-        qDebug("state: %d", snd_pcm_state(tone.handle));
-    }
-
-    if (state == 4)
-    {
-        snd_pcm_reset(tone.handle);
-    }
-}
-
-
 void MainWindow::on_checkBox_toggled(bool checked)
 {
     if (checked)
     {
-        tone.resume();
+        audioHandler->resume();
     }
     else
     {
-        tone.pause();
+        audioHandler->pause();
     }
 
 }
 
 void MainWindow::on_freqSld_sliderMoved(int position)
 {
-    tone.frequency = position / 10e3f;
-    ui->freqDisplay->setValue(tone.frequency);
+    audioHandler->sendFreq(position / 10e3f);
+//    tone.frequency = position / 10e3f;
+    ui->freqDisplay->setValue(position / 10e3f);
 }
 
 void MainWindow::on_freqDisplay_valueChanged(double arg1)
 {
-    tone.frequency = arg1;
+    audioHandler->sendFreq(arg1);
+//    tone.frequency = arg1;
     ui->freqSld->setValue((int) arg1 * 10e3f);
 }
 
 void MainWindow::on_comboBox_activated(int index)
 {
-    tone.setTone(index);
-    qDebug("tone: %d", tone.waveShape);
+    audioHandler->setTone(index);
+//    qDebug("tone: %d", tone.waveShape);
 }

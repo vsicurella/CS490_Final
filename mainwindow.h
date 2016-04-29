@@ -6,6 +6,7 @@
 
 #include <iostream>
 
+#include "audio.h"
 #include "synth.h"
 
 namespace Ui {
@@ -21,11 +22,9 @@ public:
     ~MainWindow();
 
 private slots:
-    void playNote();
-
     void on_checkBox_toggled(bool checked);
 
-    void on_freqSld_sliderMoved(int position);
+    void on_freqSld_sliderMoved(int poaudioThreadsition);
 
     void on_freqDisplay_valueChanged(double arg1);
 
@@ -34,9 +33,12 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-    Synth tone = Synth(48000);
+//    AudioHandler* audioHandler = new AudioHandler(48000);
+    Audio* audioHandler;
 
-    bool isPlaying = false;
+    QThread* audioThread;
+
+    bool playing = false;
 
     int state;
 };

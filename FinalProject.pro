@@ -16,11 +16,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     synth.cpp \
-    wavetable.cpp
+    wavetable.cpp \
+    audio.cpp
 
 HEADERS  += mainwindow.h \
     synth.h \
-    wavetable.h
+    wavetable.h \
+    audio.h
 
 FORMS    += mainwindow.ui
 

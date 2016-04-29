@@ -58,5 +58,7 @@ std::vector<float>* Wavetable::genWaveTable(int waveCode)
     }
     }
 
+    qDebug() << "Wavetable created";
+
     return table;
 }

@@ -30,6 +30,7 @@ public:
     int state;
 
     void init();
+    void prepareDevice();
 
     void addToBuffer(float* newBuffer);
     void resetBuffer();

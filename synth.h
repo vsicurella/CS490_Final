@@ -11,6 +11,7 @@
 #include <iostream>
 
 #include "wavetable.h"
+#include "oscillator.h"
 
 class Synth
 {
@@ -24,6 +25,8 @@ public:
     int CHUNK_SIZE = 256;
 
     Wavetable wavetable;
+    std::vector<Oscillator*>* oscillators = new std::vector<Oscillator*>;
+    Oscillator* tempOsc;
 
     float frequency;
     float phase;
@@ -36,8 +39,11 @@ public:
     unsigned int waveShape;
     std::vector<float>* table;
 
+    void addOsc(int num);
     void setTone(unsigned int waveCode);
 
+    void addToBuffer(float* toBuff);
+    void addToBuffer(int idx, float toBuff);
     void appendToBuffer(float smpl);
     void removeFromBuffer(int numSmpl);
     void clearBuffer();
@@ -53,12 +59,6 @@ public:
 
     bool isPlaying();
     // Should be private
-
-    const char* device = "default";
-    float* buffer = new float[CHUNK_SIZE]();
-
-    snd_pcm_t* handle;
-    snd_pcm_sframes_t frames;
 
 
 private:

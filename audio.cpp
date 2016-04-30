@@ -17,11 +17,16 @@ void Audio::init()
     buffer = new float[CHUNK_SIZE]();
     synth = Synth(SAMPLE_RATE);
 
+    prepareDevice();
+
+    qDebug() << "Audio thread: " << QThread::currentThreadId();
+}
+
+void Audio::prepareDevice()
+{
     snd_pcm_open(&handle, device, SND_PCM_STREAM_PLAYBACK, 0);
     snd_pcm_set_params(handle, SND_PCM_FORMAT_FLOAT, SND_PCM_ACCESS_RW_INTERLEAVED,
                        1, SAMPLE_RATE, 1, 100000);
-
-    qDebug() << "Audio thread: " << QThread::currentThreadId();
 }
 
 void Audio::run()
@@ -49,8 +54,8 @@ void Audio::run()
     if (state == 4)
     {
         snd_pcm_drain(handle);
-        snd_pcm_reset(handle);
-        snd_pcm_open(&handle, device, SND_PCM_STREAM_PLAYBACK, 0);
+
+        prepareDevice();
     }
 }
 

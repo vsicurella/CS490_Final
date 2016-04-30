@@ -17,12 +17,14 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     synth.cpp \
     wavetable.cpp \
-    audio.cpp
+    audio.cpp \
+    oscillator.cpp
 
 HEADERS  += mainwindow.h \
     synth.h \
     wavetable.h \
-    audio.h
+    audio.h \
+    oscillator.h
 
 FORMS    += mainwindow.ui
 

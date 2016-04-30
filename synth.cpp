@@ -20,11 +20,27 @@ Synth::Synth(int SR)
 
 Synth::~Synth()
 {
+    for (int i = 0; i < oscillators->size(); i++)
+        delete oscillators->at(oscillators->size() - i);
+
+    delete[] oscillators;
 }
 
 bool Synth::isPlaying()
 {
     return playing;
+}
+
+void Synth::addOsc(int num)
+{
+    for (int i = 0; i < num; i++)
+        oscillators->push_back(new Oscillator(this));
+}
+
+void Synth::removeOsc(int num)
+{
+    for (int i = 0; i < num; i++)
+        oscillators->pop_back();
 }
 
 void Synth::setTone(unsigned int waveCode)
@@ -33,58 +49,47 @@ void Synth::setTone(unsigned int waveCode)
     table = wavetable.genWaveTable(waveCode);
 }
 
+void Synth::addToBuffer(float *toBuff)
+{
+    for (int i = 0; i < CHUNK_SIZE; i++)
+    {
+        buffer[i] += newBuffer[i];
+    }
+}
+
+void Synth::addToBuffer(int idx, float toBuff)
+{
+    buffer[idx] += toBuff;
+}
+
 void Synth::clearBuffer()
 {
     delete buffer;
     buffer = new float[CHUNK_SIZE]();
 }
 
-void Synth::playBuffer()
-{
-    snd_pcm_writei(handle, buffer, CHUNK_SIZE);
-
-    // Clear buffer
-
-    return;
-}
-
 void Synth::nextSample()
 {
-    phaseTab = (int) round(phaseTab + frequency) % SAMPLE_RATE;
-    if(phaseTab >= SAMPLE_RATE)
-        abort();
+    for (int i = 0; i < oscillators->size(); i++)
+    {
+        tempOsc = oscillators->at(i);
+        tempOsc->phaseTab = (int) round(tempOsc->phaseTab + tempOsc->frequency) % SAMPLE_RATE;
+    }
 }
 
 float* Synth::genChunk()
 {
-    for (int i = 0; i < CHUNK_SIZE; i++)
+    for (int o = 0; o < oscillators->size(); o++)
     {
-        buffer[i] = table[0][phaseTab] * amplitude;
+        tempOsc = oscillators->at(o);
+
+        for (int i = 0; i < CHUNK_SIZE; i++)
+        {
+            addToBuffer(i, table[0][tempOsc->phaseTab] * tempOsc->amplitude);
+        }
+
         nextSample();
     }
 
     return buffer;
-}
-
-void Synth::start()
-{
-//    qDebug("got to start");
-    snd_pcm_open(&handle, device, SND_PCM_STREAM_PLAYBACK, 0);
-    snd_pcm_set_params(handle, SND_PCM_FORMAT_FLOAT, SND_PCM_ACCESS_RW_INTERLEAVED,
-                                      1, SAMPLE_RATE, 1, 100000);
-}
-
-void Synth::pause()
-{
-    snd_pcm_pause(handle, 1);
-}
-
-void Synth::resume()
-{
-    snd_pcm_pause(handle, 0);
-}
-
-void Synth::close()
-{
-    snd_pcm_close(handle);
 }

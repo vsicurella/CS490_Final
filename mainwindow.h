@@ -39,8 +39,6 @@ private:
     QThread* audioThread;
 
     bool playing = false;
-
-    int state;
 };
 
 #endif // MAINWINDOW_H

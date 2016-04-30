@@ -1,21 +1,24 @@
 #include "audio.h"
 
-Audio::Audio(int sr)
+Audio::Audio(int sr, int cs)
 {
     SAMPLE_RATE = sr;
+    CHUNK_SIZE = cs;
 }
 
 Audio::~Audio()
 {
     snd_pcm_drain(handle);
     snd_pcm_close(handle);
+    delete device;
+    delete handle;
 }
 
 void Audio::init()
 {
     device = "default";
     buffer = new float[CHUNK_SIZE]();
-    synth = Synth(SAMPLE_RATE);
+    synth = Synth(&SAMPLE_RATE, &CHUNK_SIZE);
 
     prepareDevice();
 

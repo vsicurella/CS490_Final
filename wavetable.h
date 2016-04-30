@@ -13,9 +13,9 @@ class Wavetable
 {
 public:
     Wavetable();
-    Wavetable(int SR);
+    Wavetable(int* SR);
 
-    int SAMPLE_RATE;
+    int* SAMPLE_RATE;
 
 //    float* table;
     std::vector<float>* table;

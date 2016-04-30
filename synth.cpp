@@ -2,12 +2,12 @@
 
 Synth::Synth()
 {
-    SAMPLE_RATE = 44100;
 }
 
-Synth::Synth(int SR)
+Synth::Synth(int* sr, int* cs)
 {
-    SAMPLE_RATE = SR;
+    SAMPLE_RATE = sr;
+    CHUNK_SIZE = cs;
     frequency = 1000;
     amplitude = 0.7;
     phase = 0;
@@ -16,10 +16,14 @@ Synth::Synth(int SR)
 
     wavetable = Wavetable(SAMPLE_RATE);
     setTone(Wavetable::SINE);
+
+    buffer = new float(*CHUNK_SIZE);
 }
 
 Synth::~Synth()
 {
+    delete buffer;
+
     for (int i = 0; i < oscillators->size(); i++)
         delete oscillators->at(oscillators->size() - i);
 
@@ -31,10 +35,14 @@ bool Synth::isPlaying()
     return playing;
 }
 
-void Synth::addOsc(int num)
+Oscillator* Synth::addOsc(int num)
 {
+    Oscillator* newOsc = new Oscillator(this);
+
     for (int i = 0; i < num; i++)
-        oscillators->push_back(new Oscillator(this));
+        oscillators->push_back(newOsc);
+
+    return newOsc;
 }
 
 void Synth::removeOsc(int num)
@@ -49,9 +57,9 @@ void Synth::setTone(unsigned int waveCode)
     table = wavetable.genWaveTable(waveCode);
 }
 
-void Synth::addToBuffer(float *toBuff)
+void Synth::addToBuffer(float *newBuffer)
 {
-    for (int i = 0; i < CHUNK_SIZE; i++)
+    for (int i = 0; i < *CHUNK_SIZE; i++)
     {
         buffer[i] += newBuffer[i];
     }
@@ -65,7 +73,7 @@ void Synth::addToBuffer(int idx, float toBuff)
 void Synth::clearBuffer()
 {
     delete buffer;
-    buffer = new float[CHUNK_SIZE]();
+    buffer = new float[*CHUNK_SIZE]();
 }
 
 void Synth::nextSample()
@@ -73,7 +81,7 @@ void Synth::nextSample()
     for (int i = 0; i < oscillators->size(); i++)
     {
         tempOsc = oscillators->at(i);
-        tempOsc->phaseTab = (int) round(tempOsc->phaseTab + tempOsc->frequency) % SAMPLE_RATE;
+        tempOsc->phaseTab = (int) round(tempOsc->phaseTab + tempOsc->frequency) % *SAMPLE_RATE;
     }
 }
 
@@ -83,12 +91,13 @@ float* Synth::genChunk()
     {
         tempOsc = oscillators->at(o);
 
-        for (int i = 0; i < CHUNK_SIZE; i++)
+        for (int i = 0; i < *CHUNK_SIZE; i++)
         {
             addToBuffer(i, table[0][tempOsc->phaseTab] * tempOsc->amplitude);
+            tempOsc->nextSample();
         }
 
-        nextSample();
+//        nextSample();
     }
 
     return buffer;

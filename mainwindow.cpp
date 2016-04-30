@@ -8,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     audioThread = new QThread;
-    audioHandler = new Audio(48000);
+    audioHandler = new Audio(48000, 256);
 
     qDebug() << "From main thread: " << QThread::currentThreadId();
 
@@ -47,14 +47,12 @@ void MainWindow::on_checkBox_toggled(bool checked)
 void MainWindow::on_freqSld_sliderMoved(int position)
 {
     audioHandler->sendFreq(position / 10e3f);
-//    tone.frequency = position / 10e3f;
     ui->freqDisplay->setValue(position / 10e3f);
 }
 
 void MainWindow::on_freqDisplay_valueChanged(double arg1)
 {
     audioHandler->sendFreq(arg1);
-//    tone.frequency = arg1;
     ui->freqSld->setValue((int) arg1 * 10e3f);
 }
 
@@ -62,4 +60,15 @@ void MainWindow::on_comboBox_activated(int index)
 {
     audioHandler->setTone(index);
 //    qDebug("tone: %d", tone.waveShape);
+}
+
+void MainWindow::on_addBtn_clicked()
+{
+    Oscillator* tempOsc = audioHandler->synth.addOsc(1);
+    tempOsc->frequency = tempOsc->synth->frequency * tempOsc->synth->oscillators->size();
+}
+
+void MainWindow::on_removeBtn_clicked()
+{
+    audioHandler->synth.removeOsc(1);
 }

@@ -15,7 +15,7 @@ class Audio : public QObject
 
 public:
 
-    Audio(int sr);
+    Audio(int sr, int cs);
     ~Audio();
 
     const char* device;
@@ -49,8 +49,8 @@ public slots:
 
 
 private:
-    int SAMPLE_RATE = 44100;
-    int CHUNK_SIZE = 256;
+    int SAMPLE_RATE;
+    int CHUNK_SIZE;
 
 };
 

@@ -3,19 +3,21 @@
 
 #include <QDebug>
 
-#include "synth.h"
-
+class Synth;
+//#include "synth.h"
 
 class Oscillator
 {
+
 public:
-    Oscillator();
-    Oscillator(Synth parentIn);
+//    Oscillator(){};
+    Oscillator(Synth* parent);
 
     Synth* synth;
     std::vector<float>* table;
 
     int* SAMPLE_RATE;
+    int* CHUNK_SIZE;
     bool playing;
 
 
@@ -26,7 +28,7 @@ public:
 
 
     void nextSample();
-    float* genChunk();
+//    float* genChunk();
 
 
 };

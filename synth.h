@@ -18,15 +18,17 @@ class Synth
 
 public:
     Synth();
-    Synth(int SR);
+    Synth(int* sr, int* cs);
     ~Synth();
 
-    int SAMPLE_RATE;
-    int CHUNK_SIZE = 256;
+    int* SAMPLE_RATE;
+    int* CHUNK_SIZE;
 
     Wavetable wavetable;
     std::vector<Oscillator*>* oscillators = new std::vector<Oscillator*>;
     Oscillator* tempOsc;
+
+    float* buffer;
 
     float frequency;
     float phase;
@@ -39,15 +41,15 @@ public:
     unsigned int waveShape;
     std::vector<float>* table;
 
-    void addOsc(int num);
+    Oscillator* addOsc(int num);
+    void removeOsc(int num);
     void setTone(unsigned int waveCode);
 
-    void addToBuffer(float* toBuff);
+    void addToBuffer(float* newBuffer);
     void addToBuffer(int idx, float toBuff);
     void appendToBuffer(float smpl);
     void removeFromBuffer(int numSmpl);
     void clearBuffer();
-    void playBuffer();
 
     void nextSample();
     float* genChunk();

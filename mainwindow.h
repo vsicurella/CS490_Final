@@ -30,6 +30,10 @@ private slots:
 
     void on_comboBox_activated(int index);
 
+    void on_addBtn_clicked();
+
+    void on_removeBtn_clicked();
+
 private:
     Ui::MainWindow *ui;
 

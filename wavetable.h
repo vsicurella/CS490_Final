@@ -6,23 +6,14 @@
 #include <cmath>
 #include <iostream>
 
-#define PI 3.14159265358979323846
+#define PI 3.14159265359
 
 
 class Wavetable
 {
 public:
-    Wavetable();
-    Wavetable(int* SR);
-
-    int* SAMPLE_RATE;
-
-//    float* table;
-    std::vector<float>* table;
-
-//    float* genWaveTable(int waveCode);
-    std::vector<float>* genWaveTable(int waveCode);
-
+    static void genWaveTable(int* SAMPLE_RATE, int waveCode, std::vector<float>& table);
+    static std::vector<float> genWaveTable(int* SAMPLE_RATE, int waveCode);
 
     enum WaveType: unsigned int {SINE, TRI, SAW, SQUARE};
 
@@ -33,6 +24,9 @@ public:
      * 3: Square
      * default = Sine
      */
+
+private:
+    Wavetable(){}
 };
 
 #endif // WAVETABLE_H

@@ -34,6 +34,10 @@ private slots:
 
     void on_removeBtn_clicked();
 
+    void setGUI();
+
+    void updateOscNum();
+
 private:
     Ui::MainWindow *ui;
 
@@ -43,6 +47,8 @@ private:
     QThread* audioThread;
 
     bool playing = false;
+
+
 };
 
 #endif // MAINWINDOW_H

@@ -4,14 +4,17 @@ Audio::Audio(int sr, int cs)
 {
     SAMPLE_RATE = sr;
     CHUNK_SIZE = cs;
+
+    qDebug() << "Sample Rate: " << SAMPLE_RATE;
+    qDebug() << "Chunk Size: " << CHUNK_SIZE;
 }
 
 Audio::~Audio()
 {
     snd_pcm_drain(handle);
     snd_pcm_close(handle);
-    delete device;
     delete handle;
+    delete buffer;
 }
 
 void Audio::init()
@@ -23,6 +26,12 @@ void Audio::init()
     prepareDevice();
 
     qDebug() << "Audio thread: " << QThread::currentThreadId();
+
+    for (int i = 0; i < CHUNK_SIZE; i++)
+        buffertest.push_back(&buffer[i]);
+
+
+    emit initDone();
 }
 
 void Audio::prepareDevice()
@@ -43,9 +52,9 @@ void Audio::run()
 
     if (synth.isPlaying())
     {
-        addToBuffer(synth.genChunk());
+        replaceBuffer(synth.genChunk());
         playBuffer();
-        resetBuffer();
+//        resetBuffer();
     }
 
     if (state != snd_pcm_state(handle))
@@ -65,20 +74,19 @@ void Audio::run()
 void Audio::addToBuffer(float* newBuffer)
 {
     for (int i = 0; i < CHUNK_SIZE; i++)
-    {
         buffer[i] += newBuffer[i];
+}
 
-        // /* Clip. may not be necessary
-        if (buffer[i] > 1.f)
-        {
-            buffer[i] = 1;
-        }
-        else if (buffer[i] < -1.f)
-        {
-            buffer[i] = -1;
-        }
-        // */
-    }
+void Audio::addToBuffer(std::vector<float>* newBuffer)
+{
+    for (int i = 0; i < CHUNK_SIZE; i++)
+        buffer[i] += newBuffer[0][i];
+}
+
+void Audio::replaceBuffer(std::vector<float>* newBuffer)
+{
+    for (int i = 0; i < CHUNK_SIZE; i++)
+        buffer[i] = newBuffer[0][i];
 }
 
 void Audio::resetBuffer()
@@ -89,20 +97,19 @@ void Audio::resetBuffer()
 
 void Audio::playBuffer()
 {
-    snd_pcm_writei(handle, buffer, CHUNK_SIZE);
+    frames = snd_pcm_writei(handle, buffer, CHUNK_SIZE);
 }
 
 void Audio::pause()
 {
     synth.playing = false;
-    snd_pcm_pause(handle, 0);
-
+    snd_pcm_pause(handle, 1);
 }
 
 void Audio::resume()
 {
     synth.playing = true;
-    snd_pcm_pause(handle, 1);
+    snd_pcm_pause(handle, 0);
 }
 
 void Audio::setTone(int waveCode)
@@ -112,6 +119,11 @@ void Audio::setTone(int waveCode)
 
 void Audio::sendFreq(float freq)
 {
-    synth.frequency = freq;
+    synth.sendFreq(freq);
+}
+
+void Audio::sendFreq(int oscNum, float freq)
+{
+    synth.sendFreq(oscNum, freq);
 }
 

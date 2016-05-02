@@ -2,13 +2,11 @@
 #define SYNTH_H
 
 #include <QDebug>
-#include <QThread>
 
 #include <alsa/asoundlib.h>
 #include <alsa/pcm.h>
 
 #include <cmath>
-#include <iostream>
 
 #include "wavetable.h"
 #include "oscillator.h"
@@ -24,25 +22,23 @@ public:
     int* SAMPLE_RATE;
     int* CHUNK_SIZE;
 
-    Wavetable wavetable;
-    std::vector<Oscillator*>* oscillators = new std::vector<Oscillator*>;
+    std::vector<Oscillator> oscillators;
     Oscillator* tempOsc;
 
-    float* buffer;
+//    float* buffer;
+    std::vector<float> buffer;
 
     float frequency;
-    float phase;
     float amplitude;
-
-    int phaseTab;
 
     bool playing;
 
     unsigned int waveShape;
-    std::vector<float>* table;
+    std::vector<float> wavetable;
 
     Oscillator* addOsc(int num);
     void removeOsc(int num);
+    void setOscNum(int num);
     void setTone(unsigned int waveCode);
 
     void addToBuffer(float* newBuffer);
@@ -51,8 +47,12 @@ public:
     void removeFromBuffer(int numSmpl);
     void clearBuffer();
 
+    void sendFreq(float freq);
+    void sendFreq(int oscNum, float freq);
+
     void nextSample();
-    float* genChunk();
+//    float* genChunk();
+    std::vector<float>* genChunk();
 
     void start();
     void pause();
@@ -66,6 +66,8 @@ public:
 private:
 
 
+signals:
+    void oscNumChanged();
 
 };
 

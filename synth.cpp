@@ -8,26 +8,24 @@ Synth::Synth(int* sr, int* cs)
 {
     SAMPLE_RATE = sr;
     CHUNK_SIZE = cs;
-    frequency = 1000;
-    amplitude = 0.7;
-    phase = 0;
+    frequency = 440;
+    amplitude = 0.5;
 
     playing = false;
+    wavetable = (Wavetable::genWaveTable(SAMPLE_RATE, Wavetable::SINE));
 
-    wavetable = Wavetable(SAMPLE_RATE);
-    setTone(Wavetable::SINE);
+    addOsc(1);
 
-    buffer = new float(*CHUNK_SIZE);
+//    buffer = new float[*CHUNK_SIZE]();
+    buffer.reserve(*CHUNK_SIZE);
+
+    // Initialize buffer
+    for (int i = 0; i < *CHUNK_SIZE; i++)
+        buffer.push_back(0);
 }
 
 Synth::~Synth()
 {
-    delete buffer;
-
-    for (int i = 0; i < oscillators->size(); i++)
-        delete oscillators->at(oscillators->size() - i);
-
-    delete[] oscillators;
 }
 
 bool Synth::isPlaying()
@@ -37,24 +35,35 @@ bool Synth::isPlaying()
 
 Oscillator* Synth::addOsc(int num)
 {
-    Oscillator* newOsc = new Oscillator(this);
-
     for (int i = 0; i < num; i++)
-        oscillators->push_back(newOsc);
+        oscillators.push_back(Oscillator(SAMPLE_RATE, frequency, amplitude));
 
-    return newOsc;
+//    emit oscNumChanged();
+
+    return &oscillators.back();
 }
 
 void Synth::removeOsc(int num)
 {
     for (int i = 0; i < num; i++)
-        oscillators->pop_back();
+        oscillators.pop_back();
+
+//    emit oscNumChanged();
+}
+
+void Synth::setOscNum(int num)
+{
+    if (num > 0)
+        addOsc(num);
+
+    else if (num < 0)
+        removeOsc(num);
 }
 
 void Synth::setTone(unsigned int waveCode)
 {
     waveShape = waveCode;
-    table = wavetable.genWaveTable(waveCode);
+    Wavetable::genWaveTable(SAMPLE_RATE, waveCode, wavetable);
 }
 
 void Synth::addToBuffer(float *newBuffer)
@@ -72,33 +81,47 @@ void Synth::addToBuffer(int idx, float toBuff)
 
 void Synth::clearBuffer()
 {
-    delete buffer;
-    buffer = new float[*CHUNK_SIZE]();
+    for (int i = 0; i < *CHUNK_SIZE; i++)
+        buffer[i] = 0;
+}
+
+void Synth::sendFreq(float freq)
+{
+    frequency = freq;
+
+    for (int i = 0; i < oscillators.size(); i++)
+    {
+//        oscillators.at(i).frequency = freq * (i + 1);
+        oscillators.at(i).setFreq(freq * (i+1));
+    }
+}
+
+void Synth::sendFreq(int oscNum, float freq)
+{
+    if (oscNum < oscillators.size())
+        oscillators[oscNum].setFreq(freq);
 }
 
 void Synth::nextSample()
 {
-    for (int i = 0; i < oscillators->size(); i++)
+    for (int i = 0; i < oscillators.size(); i++)
     {
-        tempOsc = oscillators->at(i);
+        tempOsc = &oscillators.at(i);
         tempOsc->phaseTab = (int) round(tempOsc->phaseTab + tempOsc->frequency) % *SAMPLE_RATE;
     }
 }
-
-float* Synth::genChunk()
+std::vector<float>* Synth::genChunk()
 {
-    for (int o = 0; o < oscillators->size(); o++)
+    clearBuffer();
+    for (int osc = 0; osc < oscillators.size(); osc++)
     {
-        tempOsc = oscillators->at(o);
-
-        for (int i = 0; i < *CHUNK_SIZE; i++)
+        tempOsc = &oscillators[osc];
+        for (unsigned int i = 0; i < *CHUNK_SIZE; i++)
         {
-            addToBuffer(i, table[0][tempOsc->phaseTab] * tempOsc->amplitude);
+            addToBuffer(i, wavetable[tempOsc->phaseTab] * tempOsc->amplitude);
             tempOsc->nextSample();
         }
-
-//        nextSample();
     }
 
-    return buffer;
+    return &buffer;
 }

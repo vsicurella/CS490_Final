@@ -1,30 +1,15 @@
 #include "wavetable.h"
 
-Wavetable::Wavetable()
+void Wavetable::genWaveTable(int* SAMPLE_RATE, int waveCode, std::vector<float>& table)
 {
-    int sr = 44100;
-    SAMPLE_RATE = &sr;
-}
-
-Wavetable::Wavetable(int* SR)
-{
-    SAMPLE_RATE = SR;
-
-    table = new std::vector<float>();
-    table->reserve(*SAMPLE_RATE);
-}
-
-
-std::vector<float>* Wavetable::genWaveTable(int waveCode)
-{
-    table->clear();
+    table.clear();
 
     switch(waveCode){
 
     default:
     {
         for (int i = 0; i < *SAMPLE_RATE; i++)
-            table->push_back(sin(2*PI * i / (float) *SAMPLE_RATE));
+            table.push_back(sin(2*PI * i / (float) *SAMPLE_RATE));
 
         break;
     }
@@ -32,7 +17,7 @@ std::vector<float>* Wavetable::genWaveTable(int waveCode)
     case TRI:
     {
         for (int i = 0; i < *SAMPLE_RATE; i++)
-            table->push_back(std::abs(fmod(((i / (float) *SAMPLE_RATE) * 2), 1.0) - 1) - 1);
+            table.push_back(std::abs(fmod(((i / (float) *SAMPLE_RATE) * 2), 1.0) - 1) - 1);
 
         break;
     }
@@ -40,7 +25,7 @@ std::vector<float>* Wavetable::genWaveTable(int waveCode)
     case SAW:
     {
         for (int i = 0; i < *SAMPLE_RATE; i++)
-            table->push_back(fmod(((i / (float) *SAMPLE_RATE) * 2), 1.0) - 1);
+            table.push_back(fmod(((i / (float) *SAMPLE_RATE) * 2), 1.0) - 1);
 
         break;
     }
@@ -50,9 +35,9 @@ std::vector<float>* Wavetable::genWaveTable(int waveCode)
         for (int i= 0; i < *SAMPLE_RATE; i++)
         {
             if (i < *SAMPLE_RATE / 2)
-                table->push_back(1);
+                table.push_back(1);
             else
-                table->push_back(0);
+                table.push_back(0);
         }
 
         break;
@@ -60,6 +45,52 @@ std::vector<float>* Wavetable::genWaveTable(int waveCode)
     }
 
     qDebug() << "Wavetable created";
+}
 
+std::vector<float> Wavetable::genWaveTable(int* SAMPLE_RATE, int waveCode)
+{
+    std::vector<float> table;
+
+    switch(waveCode){
+
+    default:
+    {
+        for (int i = 0; i < *SAMPLE_RATE; i++)
+            table.push_back(sin(2*PI * i / (float) *SAMPLE_RATE));
+
+        break;
+    }
+
+    case TRI:
+    {
+        for (int i = 0; i < *SAMPLE_RATE; i++)
+            table.push_back(std::abs(fmod(((i / (float) *SAMPLE_RATE) * 2), 1.0) - 1) - 1);
+
+        break;
+    }
+
+    case SAW:
+    {
+        for (int i = 0; i < *SAMPLE_RATE; i++)
+            table.push_back(fmod(((i / (float) *SAMPLE_RATE) * 2), 1.0) - 1);
+
+        break;
+    }
+
+    case SQUARE:
+    {
+        for (int i= 0; i < *SAMPLE_RATE; i++)
+        {
+            if (i < *SAMPLE_RATE / 2)
+                table.push_back(1);
+            else
+                table.push_back(0);
+        }
+
+        break;
+    }
+    }
+
+    qDebug() << "Wavetable created";
     return table;
 }

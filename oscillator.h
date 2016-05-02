@@ -3,34 +3,26 @@
 
 #include <QDebug>
 
-class Synth;
-//#include "synth.h"
+#include <cmath>
+
+#define PI 3.14159265359
 
 class Oscillator
 {
 
 public:
-//    Oscillator(){};
-    Oscillator(Synth* parent);
-
-    Synth* synth;
-    std::vector<float>* table;
+    Oscillator(int* sr, float freq, float amp);
 
     int* SAMPLE_RATE;
-    int* CHUNK_SIZE;
-    bool playing;
-
 
     float frequency;
     float amplitude;
     float phase;
-    int phaseTab;
-
+    unsigned int phaseTab;
 
     void nextSample();
-//    float* genChunk();
 
-
+    void setFreq(float freq);
 };
 
 #endif // OSCILLATOR_H

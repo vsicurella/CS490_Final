@@ -3,6 +3,7 @@
 
 #include <QtCore>
 #include <QDebug>
+#include <QMainWindow>
 
 #include <alsa/asoundlib.h>
 #include <alsa/pcm.h>
@@ -20,6 +21,7 @@ public:
 
     const char* device;
     float* buffer;
+    std::vector<float*> buffertest;
 
     snd_pcm_t* handle;
     snd_pcm_sframes_t frames;
@@ -33,6 +35,8 @@ public:
     void prepareDevice();
 
     void addToBuffer(float* newBuffer);
+    void addToBuffer(std::vector<float>* newBuffer);
+    void replaceBuffer(std::vector<float>* newBuffer);
     void resetBuffer();
     void playBuffer();
 
@@ -41,8 +45,11 @@ public:
 
     void setTone(int waveCode);
     void sendFreq(float freq);
+    void sendFreq(int oscNum, float freq);
+
 
 signals:
+    void initDone();
 
 public slots:
     void run();

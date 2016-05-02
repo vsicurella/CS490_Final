@@ -1,29 +1,23 @@
 #include "oscillator.h"
-#include "synth.h"
 
-//Oscillator::Oscillator() {}
-
-Oscillator::Oscillator(Synth* parent)
+Oscillator::Oscillator(int* sr, float freq, float amp)
 {
-    synth = parent;
-    table = synth->table;
+    SAMPLE_RATE = sr;
 
-    SAMPLE_RATE = synth->SAMPLE_RATE;
-    CHUNK_SIZE = synth->CHUNK_SIZE;
+    frequency = freq;
+    amplitude = amp;
+    phase = 0;
+    phaseTab = 0;
 }
 
 void Oscillator::nextSample()
 {
     phaseTab = (int) round(phaseTab + frequency) % *SAMPLE_RATE;
+    phase = (phaseTab / (float) *SAMPLE_RATE) * 2 * PI;
 }
 
-//float* Oscillator::genChunk()
-//{
-//    for (int i = 0; i < *CHUNK_SIZE; i++)
-//    {
-//        buffer[i] = table[0][phaseTab] * amplitude;
-//        nextSample();
-//    }
-
-//    return buffer;
-//}
+void Oscillator::setFreq(float freq)
+{
+    frequency = freq;
+//    qDebug() << "freq changed to: " << freq;
+}

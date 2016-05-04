@@ -18,7 +18,7 @@ public:
     float frequency;
     float amplitude;
     float phase;
-    unsigned int phaseTab;
+    unsigned float phaseTab;
 
     void nextSample();
 

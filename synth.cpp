@@ -118,7 +118,7 @@ std::vector<float>* Synth::genChunk()
         tempOsc = &oscillators[osc];
         for (unsigned int i = 0; i < *CHUNK_SIZE; i++)
         {
-            addToBuffer(i, wavetable[tempOsc->phaseTab] * tempOsc->amplitude);
+            addToBuffer(i, wavetable[round(tempOsc->phaseTab)] * tempOsc->amplitude);
             tempOsc->nextSample();
         }
     }

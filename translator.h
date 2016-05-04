@@ -23,6 +23,14 @@ public:
     std::vector<cv::Point>* finalPoints;
 
 
+    // PITCH QUANTIZATION
+
+    float windowRange;
+    float windowOffset;
+    bool quantizing;
+    float unisonHarmonic;
+    float divisions;
+
 
     // POINT INTERPOLATION
 
@@ -32,15 +40,8 @@ public:
 
     void interpolate();
 
-
-
-    // PITCH QUANTIZATION
-
-    float windowRange;
-    float windowOffset;
-    bool quantizing;
-    float unisonHarmonic;
-    float divisions;
+    // Convert x-value to frequency
+    float pointToFrequency(int xcoord);
 
 public slots:
 

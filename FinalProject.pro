@@ -18,14 +18,29 @@ SOURCES += main.cpp\
     synth.cpp \
     wavetable.cpp \
     audio.cpp \
-    oscillator.cpp
+    oscillator.cpp \
+    cameracapture.cpp \
+    configurationwindow.cpp \
+    imageprocessor.cpp \
+    systemconfiguration.cpp \
+    translator.cpp \
+    synthesizersettings.cpp
 
 HEADERS  += mainwindow.h \
     synth.h \
     wavetable.h \
     audio.h \
-    oscillator.h
+    oscillator.h \
+    cameracapture.h \
+    configurationwindow.h \
+    imageprocessor.h \
+    systemconfiguration.h \
+    translator.h \
+    synthesizersettings.h
 
-FORMS    += mainwindow.ui
+FORMS    += \
+    configurationwindow.ui \
+    mainwindow.ui \
+    synthesizersettings.ui
 
 LIBS += `pkg-config opencv --libs alsa --libs`

@@ -7,6 +7,8 @@ Audio::Audio(int sr, int cs)
 
     qDebug() << "Sample Rate: " << SAMPLE_RATE;
     qDebug() << "Chunk Size: " << CHUNK_SIZE;
+
+    translator = new Translator();
 }
 
 Audio::~Audio()
@@ -15,6 +17,8 @@ Audio::~Audio()
     snd_pcm_close(handle);
     delete handle;
     delete buffer;
+
+    delete translator;
 }
 
 void Audio::init()

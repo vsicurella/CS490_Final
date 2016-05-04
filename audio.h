@@ -9,6 +9,7 @@
 #include <alsa/pcm.h>
 
 #include "synth.h"
+#include "translator.h"
 
 class Audio : public QObject
 {
@@ -26,6 +27,7 @@ public:
     snd_pcm_t* handle;
     snd_pcm_sframes_t frames;
 
+    Translator* translator;
     Synth synth;
 
     bool initialized = false;

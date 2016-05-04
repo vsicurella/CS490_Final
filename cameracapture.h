@@ -16,26 +16,32 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //----------------------------------------------------------------------
+#ifndef CAMERACAPTURE_H
+#define CAMERACAPTURE_H
+#include <QThread>
+#include <opencv2/opencv.hpp>
+#include "imageprocessor.h"
+#include <QImage>
 
-#include "mainwindow.h"
-#include <QApplication>
-#include <sstream>
+using namespace cv;
 
-
-int main(int argc, char *argv[])
+class CameraCapture: public QThread
 {
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
+    Q_OBJECT
+public:
+    CameraCapture(VideoCapture);
+    ImageProcessor processor;
 
-    if(argc == 2)
-    {
+signals:
+    void capturedNewFrame(QImage, QImage);
+    void sendFinalPoints();
 
-        std::istringstream ss(argv[1]);
-        int id =0;
-        ss >> id;
-        w.startAutoMode(id);
-    }
+private:
+    VideoCapture captureDevice;
 
-    return a.exec();
-}
+protected:
+    void run();
+};
+
+
+#endif // CAMERACAPTURE_H

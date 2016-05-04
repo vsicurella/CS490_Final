@@ -69,9 +69,8 @@ void Synth::setTone(unsigned int waveCode)
 void Synth::addToBuffer(float *newBuffer)
 {
     for (int i = 0; i < *CHUNK_SIZE; i++)
-    {
         buffer[i] += newBuffer[i];
-    }
+
 }
 
 void Synth::addToBuffer(int idx, float toBuff)
@@ -113,6 +112,7 @@ void Synth::nextSample()
 std::vector<float>* Synth::genChunk()
 {
     clearBuffer();
+
     for (int osc = 0; osc < oscillators.size(); osc++)
     {
         tempOsc = &oscillators[osc];
@@ -124,4 +124,15 @@ std::vector<float>* Synth::genChunk()
     }
 
     return &buffer;
+}
+
+void Synth::sendValues(int oscNum, float freq, float amp)
+{
+    if (oscNum < oscillators.size())
+    {
+        tempOsc = &oscillators[oscNum];
+
+
+
+    }
 }

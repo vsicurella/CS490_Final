@@ -49,6 +49,7 @@ public:
 
     void sendFreq(float freq);
     void sendFreq(int oscNum, float freq);
+    void sendValues(int oscNum, float freq, float amp);
 
     void nextSample();
 //    float* genChunk();

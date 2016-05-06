@@ -104,10 +104,10 @@ void MainWindow::updateCameraFeedDisplay(QImage img1, QImage img2)
     ui->displayDetectedPoints->setPixmap(QPixmap::fromImage(img2).scaled(ui->displayDetectedPoints->width(), ui->displayDetectedPoints->height()));
 
     // Since final points have been created, initiate the translator
-    if (!translatorInit)
+//    if (!translatorInit)
     {
-        translatorInit = true;
-        connectFinalPoints();
+//        translatorInit = true;
+//        connectFinalPoints();
     }
 
 }
@@ -152,13 +152,13 @@ void MainWindow::on_btn_configure_clicked()
 void MainWindow::connectFinalPoints()
 {
     // point the data translator to the final finger points
-    audioHandler->translator->finalPoints = &cameraCapture->processor.finalPoints;
+//    audioHandler->translator->finalPoints = &cameraCapture->processor.finalPoints;
     audioHandler->finalPoints = &cameraCapture->processor.finalPoints;
 
-    connect(&cameraCapture->processor, SIGNAL(pointsReady()), audioHandler->translator, SLOT(makeReady()));
-    connect(qTimer, SIGNAL(timeout()), audioHandler->translator, SLOT(translate()));
+//    connect(&cameraCapture->processor, SIGNAL(pointsReady()), audioHandler->translator, SLOT(makeReady()));
+//    connect(qTimer, SIGNAL(timeout()), audioHandler->translator, SLOT(translate()));
     connect(timerHand, SIGNAL(timeout()), audioHandler, SLOT(checkPlaying()));
-    connect(audioHandler->translator, SIGNAL(sendNumTones(int)), audioHandler->synth, SLOT(setOscNum(int)));
+//    connect(audioHandler->translator, SIGNAL(sendNumTones(int)), audioHandler->synth, SLOT(setOscNum(int)));
     timerHand->start(50);
 }
 

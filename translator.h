@@ -46,6 +46,7 @@ public:
     float divisions;
 
     float quantize(float degree);
+    static float quantize(float baseHz, float octave, float divs, float size, float xcoord);
 
 
     // POINT INTERPOLATION
@@ -57,6 +58,7 @@ public:
 
     // Convert x-value to frequency
     float pointToFrequency(float xcoord);
+    static float pointToFrequency(float baseHz, float octave, float size, float xcoord);
 
 public slots:
 

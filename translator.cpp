@@ -66,6 +66,11 @@ float Translator::quantize(float degree)
     return round(divisions * log(degree)/log(harmonic)) * SystemConfiguration::image_size / range;
 }
 
+//static float Translator::quantize(float baseHz, float octave, float divs, float size, float xcoord)
+//{
+//    return round(divs * log(size*xcoord/(float)SystemConfiguration::image_size)/log(octave)) * SystemConfiguration::image_size / size;
+//}
+
 void Translator::interpolate(int num, float xcoord)
 {   
     // Update
@@ -84,6 +89,11 @@ float Translator::pointToFrequency(float xcoord)
 {
     return (startingFreq * pow(harmonic, range * xcoord / SystemConfiguration::image_size));
 }
+
+//static float Translator::pointToFrequency(float baseHz, float octave, float size, float xcoord)
+//{
+//    return (baseHz * pow(octave, size * xcoord / SystemConfiguration::image_size));
+//}
 
 void Translator::makeReady()
 {

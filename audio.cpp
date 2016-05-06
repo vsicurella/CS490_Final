@@ -16,7 +16,7 @@ Audio::~Audio()
     delete handle;
     delete buffer;
 
-    delete translator;
+//    delete translator;
 }
 
 void Audio::init()
@@ -30,10 +30,7 @@ void Audio::init()
 
     qDebug() << "Audio thread: " << QThread::currentThreadId();
 
-    for (int i = 0; i < CHUNK_SIZE; i++)
-        buffertest.push_back(&buffer[i]);
-
-    connect(translator, SIGNAL(sendDataToSynth(int,float,float)), synth, SLOT(sendData(int, float, float)));
+//    connect(translator, SIGNAL(sendDataToSynth(int,float,float)), synth, SLOT(sendData(int, float, float)));
 
     emit initDone();
 }
@@ -133,11 +130,22 @@ void Audio::sendFreq(int oscNum, float freq)
 
 void Audio::checkPlaying()
 {
-    if (finalPoints->size())
+    if (finalPoints->size() > 0)
+    {
         synth->playing = true;
+        synth->setOscNum(finalPoints->size());
+
+        for (int i = 0; i < finalPoints->size(); i++)
+        {
+            tempPoint = finalPoints[0][i];
+//            synth->sendData(i, translator->pointToFrequency(tempPoint.x), 1 - (tempPoint.y/SystemConfiguration::image_size));
+            synth->sendData(i, tempPoint.x*2, 0.5);
+        }
+    }
     else
     {
-        resetBuffer();
         synth->playing = false;
+        synth->setOscNum(0);
+        resetBuffer();
     }
 }

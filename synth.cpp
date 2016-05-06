@@ -14,8 +14,6 @@ Synth::Synth(int* sr, int* cs)
     playing = false;
     wavetable = (Wavetable::genWaveTable(SAMPLE_RATE, Wavetable::SINE));
 
-    addOsc(1);
-
 //    buffer = new float[*CHUNK_SIZE]();
     buffer.reserve(*CHUNK_SIZE);
 

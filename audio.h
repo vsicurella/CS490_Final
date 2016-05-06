@@ -37,6 +37,8 @@ public:
     bool initialized = false;
     int state;
 
+    cv::Point tempPoint;
+
     void init();
     void prepareDevice();
 

@@ -42,8 +42,7 @@ void CameraCapture::run()
             resize(originalImageMat,resizedImageMat,resizedImageMat.size(),0,0,INTER_NEAREST);
             flip(resizedImageMat, resizedImageMat, 1);
 //            flip(resizedImageMat, resizedImageMat, 1);
-            // create display image
-//            QImage originalImage = processor.convertMatToQImage(resizedImageMat);
+
             // get skin image
             Mat skinImageMat = processor.getSkin(resizedImageMat);
             // get processed images
@@ -52,13 +51,7 @@ void CameraCapture::run()
             QImage binaryImage = processor.convertMatToQImage(processedImageMat[0]);
             // create display image
             QImage processedImage = processor.convertMatToQImage(processedImageMat[1]);
-            // get output image
-//            Mat justOutput = processor.getOutputImage();
-            // create display image
-//            QImage frameQImage3 = processor.convertMatToQImage(justOutput);
-//            // generate mouse events
-//            processor.generateMouseEvents();
-            // generate events
+
 
             emit(capturedNewFrame(binaryImage, processedImage));
         }

@@ -5,6 +5,8 @@
 #include <QDebug>
 #include <QMainWindow>
 
+#include "opencv2/core/core.hpp"
+
 #include <alsa/asoundlib.h>
 #include <alsa/pcm.h>
 
@@ -28,7 +30,9 @@ public:
     snd_pcm_sframes_t frames;
 
     Translator* translator;
-    Synth synth;
+    Synth* synth;
+
+    std::vector<cv::Point>* finalPoints;
 
     bool initialized = false;
     int state;
@@ -55,6 +59,7 @@ signals:
 
 public slots:
     void run();
+    void checkPlaying();
 
 
 private:

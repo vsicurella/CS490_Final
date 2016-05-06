@@ -226,6 +226,9 @@ vector<Mat> ImageProcessor::getprocessedImage(Mat image)
     // add drawing image to set of output images
     outputs.push_back(drawingCanvas);
     // return set of output images
+
+    emit pointsReady();
+
     return outputs;
 }
 

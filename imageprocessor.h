@@ -100,6 +100,7 @@ public:
 signals:
     // (point index, x value, y value
     void sendFinalPoint(int, int, int);
+    void pointsReady();
 };
 
 #endif // IMAGEPROCESSOR_H

@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------
+﻿//----------------------------------------------------------------------
 // VMouse - OpenCV Virtual Mouse (HCI)
 // Copyright (C) 2014  Kunal Dawn <kunal.dawn@gmail.com>
 // Copyright (C) 2014  Medha Devaraj <medha.devaraj@gmail.com>
@@ -45,9 +45,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     qTimer = new QTimer(this);
     timerHand = new QTimer(this);
-
-    audioHandler->moveToThread(audioThread);
-    audioThread->start();
 }
 
 void MainWindow::startAutoMode(int devId)
@@ -70,11 +67,6 @@ void MainWindow::startAutoMode(int devId)
 
     // every thing is ok, start capturing
     startProcessing();
-
-    connect(qTimer, SIGNAL(timeout()), audioHandler, SLOT(run()));
-    connect(qTimer, SIGNAL(timeout()), audioHandler->translator, SLOT(translate()));
-    qTimer->start(1);
-    timerHand->start(50);
 }
 
 MainWindow::~MainWindow()
@@ -110,6 +102,14 @@ void MainWindow::updateCameraFeedDisplay(QImage img1, QImage img2)
     // display received images
     ui->displayProcessedFrame->setPixmap(QPixmap::fromImage(img1).scaled(ui->displayProcessedFrame->width(), ui->displayProcessedFrame->height()));
     ui->displayDetectedPoints->setPixmap(QPixmap::fromImage(img2).scaled(ui->displayDetectedPoints->width(), ui->displayDetectedPoints->height()));
+
+    // Since final points have been created, initiate the translator
+    if (!translatorInit)
+    {
+        translatorInit = true;
+        connectFinalPoints();
+    }
+
 }
 
 
@@ -120,16 +120,18 @@ void MainWindow::startProcessing()
     // create a new camera capture object
     cameraCapture = new CameraCapture(captureDevice);
 
-    // point the data translator to the final finger points
-    audioHandler->translator->finalPoints = &cameraCapture->processor.finalPoints;
+    // set up audio
+    audioHandler->moveToThread(audioThread);
+    connect(qTimer, SIGNAL(timeout()), audioHandler, SLOT(run()));
+    connect(audioHandler, SIGNAL(initDone()), this, SLOT(connectFinalPoints()));
 
     // connect the signal to receive images
     connect(cameraCapture,SIGNAL(capturedNewFrame(QImage,QImage)),this,SLOT(updateCameraFeedDisplay(QImage,QImage)));
-    connect(timerHand, SIGNAL(timeout()), this, SLOT(sendFreq()));
 
     // start capturing process
     cameraCapture->start();
-
+    audioThread->start();
+    qTimer->start(1);
 }
 
 void MainWindow::on_btn_configure_clicked()
@@ -147,36 +149,49 @@ void MainWindow::on_btn_configure_clicked()
     configWindow->activateWindow();
 }
 
-void MainWindow::sendFreq()
+void MainWindow::connectFinalPoints()
 {
-//    finalPoints = cameraCapture->getFinalPoints();
+    // point the data translator to the final finger points
+    audioHandler->translator->finalPoints = &cameraCapture->processor.finalPoints;
+    audioHandler->finalPoints = &cameraCapture->processor.finalPoints;
 
-    int numOsc = finalPoints->size() - audioHandler->synth.oscillators.size();
-
-    if (finalPoints->size() > 0)
-    {
-        audioHandler->synth.playing = true;
-//        audioHandler->sendAmp(
-//                    (SystemConfiguration::image_size - finalPoints->at(0).y) / (float) SystemConfiguration::image_size);
-        audioHandler->synth.setOscNum(numOsc);
-
-        vector<Point>::iterator it;
-        int osc = 0; // number of oscillators
-        Point temp;
-
-        for (it = finalPoints->begin(); it != finalPoints->end(); it++, osc++)
-        {
-            temp = *it;
-            audioHandler->sendFreq(osc, temp.x*2);
-//            qDebug() << "Finger #" << osc+1 << "x: " << temp.x << "\t y: " << temp.y;
-//            qDebug() << "number of osc: " << numOsc;
-        }
-    }
-
-    else
-    {
-        audioHandler->synth.setOscNum(0);
-        audioHandler->synth.clearBuffer();
-        audioHandler->synth.playing = false;
-    }
+    connect(&cameraCapture->processor, SIGNAL(pointsReady()), audioHandler->translator, SLOT(makeReady()));
+    connect(qTimer, SIGNAL(timeout()), audioHandler->translator, SLOT(translate()));
+    connect(timerHand, SIGNAL(timeout()), audioHandler, SLOT(checkPlaying()));
+    connect(audioHandler->translator, SIGNAL(sendNumTones(int)), audioHandler->synth, SLOT(setOscNum(int)));
+    timerHand->start(50);
 }
+
+//void MainWindow::sendFreq()
+//{
+////    finalPoints = cameraCapture->getFinalPoints();
+
+//    int numOsc = finalPoints->size() - audioHandler->synth->oscillators.size();
+
+//    if (finalPoints->size() > 0)
+//    {
+//        audioHandler->synth->playing = true;
+////        audioHandler->sendAmp(
+////                    (SystemConfiguration::image_size - finalPoints->at(0).y) / (float) SystemConfiguration::image_size);
+//        audioHandler->synth->setOscNum(numOsc);
+
+//        vector<Point>::iterator it;
+//        int osc = 0; // number of oscillators
+//        Point temp;
+
+//        for (it = finalPoints->begin(); it != finalPoints->end(); it++, osc++)
+//        {
+//            temp = *it;
+//            audioHandler->sendFreq(osc, temp.x*2);
+////            qDebug() << "Finger #" << osc+1 << "x: " << temp.x << "\t y: " << temp.y;
+////            qDebug() << "number of osc: " << numOsc;
+//        }
+//    }
+
+//    else
+//    {
+//        audioHandler->synth->setOscNum(0);
+//        audioHandler->synth->clearBuffer();
+//        audioHandler->synth->playing = false;
+//    }
+//}

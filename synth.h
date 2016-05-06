@@ -11,8 +11,9 @@
 #include "wavetable.h"
 #include "oscillator.h"
 
-class Synth
+class Synth: public QObject
 {
+    Q_OBJECT
 
 public:
     Synth();
@@ -38,7 +39,6 @@ public:
 
     Oscillator* addOsc(int num);
     void removeOsc(int num);
-    void setOscNum(int num);
     void setTone(unsigned int waveCode);
 
     void addToBuffer(float* newBuffer);
@@ -49,10 +49,8 @@ public:
 
     void sendFreq(float freq);
     void sendFreq(int oscNum, float freq);
-    void sendValues(int oscNum, float freq, float amp);
 
     void nextSample();
-//    float* genChunk();
     std::vector<float>* genChunk();
 
     void start();
@@ -63,12 +61,16 @@ public:
     bool isPlaying();
     // Should be private
 
+public slots:
+
+    void setOscNum(int num);
+    void sendData(int oscNum, float freq, float amp);
+
 
 private:
 
 
 signals:
-    void oscNumChanged();
 
 };
 

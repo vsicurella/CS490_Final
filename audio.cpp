@@ -7,8 +7,6 @@ Audio::Audio(int sr, int cs)
 
     qDebug() << "Sample Rate: " << SAMPLE_RATE;
     qDebug() << "Chunk Size: " << CHUNK_SIZE;
-
-    translator = new Translator();
 }
 
 Audio::~Audio()
@@ -25,7 +23,8 @@ void Audio::init()
 {
     device = "default";
     buffer = new float[CHUNK_SIZE]();
-    synth = Synth(&SAMPLE_RATE, &CHUNK_SIZE);
+    synth = new Synth(&SAMPLE_RATE, &CHUNK_SIZE);
+    translator = new Translator(110, 2, 3, false, 12, false, 3);
 
     prepareDevice();
 
@@ -34,6 +33,7 @@ void Audio::init()
     for (int i = 0; i < CHUNK_SIZE; i++)
         buffertest.push_back(&buffer[i]);
 
+    connect(translator, SIGNAL(sendDataToSynth(int,float,float)), synth, SLOT(sendData(int, float, float)));
 
     emit initDone();
 }
@@ -54,9 +54,9 @@ void Audio::run()
         qDebug() << "Audio components initialized.";
     }
 
-    if (synth.isPlaying())
+    if (synth->isPlaying())
     {
-        replaceBuffer(synth.genChunk());
+        replaceBuffer(synth->genChunk());
         playBuffer();
 //        resetBuffer();
     }
@@ -67,10 +67,10 @@ void Audio::run()
         qDebug() << "State: " << state;
     }
 
+    // Buffer underrun (not being written to fast enough)
     if (state == 4)
     {
         snd_pcm_drain(handle);
-
         prepareDevice();
     }
 }
@@ -106,28 +106,38 @@ void Audio::playBuffer()
 
 void Audio::pause()
 {
-    synth.playing = false;
+    synth->playing = false;
     snd_pcm_pause(handle, 1);
 }
 
 void Audio::resume()
 {
-    synth.playing = true;
+    synth->playing = true;
     snd_pcm_pause(handle, 0);
 }
 
 void Audio::setTone(int waveCode)
 {
-    synth.setTone(waveCode);
+    synth->setTone(waveCode);
 }
 
 void Audio::sendFreq(float freq)
 {
-    synth.sendFreq(freq);
+    synth->sendFreq(freq);
 }
 
 void Audio::sendFreq(int oscNum, float freq)
 {
-    synth.sendFreq(oscNum, freq);
+    synth->sendFreq(oscNum, freq);
 }
 
+void Audio::checkPlaying()
+{
+    if (finalPoints->size())
+        synth->playing = true;
+    else
+    {
+        resetBuffer();
+        synth->playing = false;
+    }
+}

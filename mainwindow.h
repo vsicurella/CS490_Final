@@ -52,6 +52,8 @@ public:
 
     bool playing = false;
 
+    bool translatorInit = false;
+
 private slots:
     // a slot to receive start button click signal
     void on_startBtn_clicked();
@@ -60,7 +62,7 @@ private slots:
     // slot to receive configure button click signal
     void on_btn_configure_clicked();
 
-    void sendFreq();
+    void connectFinalPoints();
 
 private:
     Ui::MainWindow *ui;

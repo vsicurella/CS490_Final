@@ -38,8 +38,6 @@ Oscillator* Synth::addOsc(int num)
     for (int i = 0; i < num; i++)
         oscillators.push_back(Oscillator(SAMPLE_RATE, frequency, amplitude));
 
-//    emit oscNumChanged();
-
     return &oscillators.back();
 }
 
@@ -47,8 +45,6 @@ void Synth::removeOsc(int num)
 {
     for (int i = 0; i < num; i++)
         oscillators.pop_back();
-
-//    emit oscNumChanged();
 }
 
 void Synth::setOscNum(int num)
@@ -126,13 +122,11 @@ std::vector<float>* Synth::genChunk()
     return &buffer;
 }
 
-void Synth::sendValues(int oscNum, float freq, float amp)
-{
-    if (oscNum < oscillators.size())
-    {
-        tempOsc = &oscillators[oscNum];
+void Synth::sendData(int oscNum, float freq, float amp)
+{ 
+    tempOsc = &oscillators[oscNum];
+//    qDebug() << "Changing oscillator #" << oscNum << " from " << tempOsc->frequency << "hz to " << freq << "hz.";
+    tempOsc->frequency = freq;
+    tempOsc->amplitude = amp;
 
-
-
-    }
 }

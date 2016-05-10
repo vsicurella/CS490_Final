@@ -12,7 +12,7 @@ Translator::Translator(float lowHz, float unisonInterval, float octaves, bool qu
     interpolating = interp;
     interpSteps = interpAmt;
 
-    maxTones = 1;
+    maxTones = 8;
 
     quotientTable = new fingerData[maxTones];
 }
@@ -54,7 +54,7 @@ void Translator::translate()
 
             freqOut = pointToFrequency(translatedX);
 
-            qDebug() << "------------\nnum: " << i << "\nfreq: " << freqOut << "\namp: " << ampOut << "\n------------";
+//            qDebug() << "------------\nnum: " << i << "\nfreq: " << freqOut << "\namp: " << ampOut << "\n------------";
 
             emit sendDataToSynth(i, freqOut, ampOut);
         }

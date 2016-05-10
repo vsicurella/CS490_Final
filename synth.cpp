@@ -14,7 +14,7 @@ Synth::Synth(int* sr, int* cs)
     playing = false;
     wavetable = (Wavetable::genWaveTable(SAMPLE_RATE, Wavetable::SINE));
 
-    addOsc(1);
+//    addOsc(1);
 
 //    buffer = new float[*CHUNK_SIZE]();
     buffer.reserve(*CHUNK_SIZE);
@@ -49,11 +49,13 @@ void Synth::removeOsc(int num)
 
 void Synth::setOscNum(int num)
 {
+    num -= oscillators.size();
+
     if (num > 0)
         addOsc(num);
 
     else if (num < 0)
-        removeOsc(num);
+        removeOsc(abs(num));
 }
 
 void Synth::setTone(unsigned int waveCode)

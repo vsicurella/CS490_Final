@@ -159,7 +159,7 @@ void MainWindow::connectFinalPoints()
     connect(qTimer, SIGNAL(timeout()), audioHandler->translator, SLOT(translate()));
     connect(timerHand, SIGNAL(timeout()), audioHandler, SLOT(checkPlaying()));
     connect(audioHandler->translator, SIGNAL(sendNumTones(int)), audioHandler->synth, SLOT(setOscNum(int)));
-    timerHand->start(50);
+    timerHand->start(500);
 }
 
 //void MainWindow::sendFreq()

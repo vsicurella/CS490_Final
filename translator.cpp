@@ -24,41 +24,39 @@ Translator::~Translator()
 
 void Translator::translate()
 {
-    if (ready)
+    if (finalPoints->size() < maxTones)
+        iterationBound = finalPoints->size();
+    else
+        iterationBound = maxTones;
+
+//    qDebug() << finalPoints->size();
+    emit sendNumTones(iterationBound);
+
+    for (int i = 0; i < iterationBound; i++)
     {
-        if (finalPoints->size() < maxTones)
-            iterationBound = finalPoints->size();
-        else
-            iterationBound = maxTones;
+        currentPoint = &finalPoints[0][i];
+        translatedX = currentPoint->x;
+        ampOut = 1 - (currentPoint->y / (float) SystemConfiguration::image_size);
 
-//        qDebug() << finalPoints->size();
-        emit sendNumTones(iterationBound);
+        scaleDegree = (range * currentPoint->x/(float) SystemConfiguration::image_size);
 
-        for (int i = 0; i < iterationBound; i++)
+        if (quantizing)
         {
-            currentPoint = &finalPoints[0][i];
-            translatedX = currentPoint->x;
-            ampOut = 1 - (currentPoint->y / (float) SystemConfiguration::image_size);
-
-            scaleDegree = (range * currentPoint->x/(float) SystemConfiguration::image_size);
-
-            if (quantizing)
-            {
-                translatedX = quantize(scaleDegree);
-            }
-
-            if (interpolating)
-            {
-                interpolate(i, translatedX);
-            }
-
-            freqOut = pointToFrequency(translatedX);
-
-//            qDebug() << "------------\nnum: " << i << "\nfreq: " << freqOut << "\namp: " << ampOut << "\n------------";
-
-            emit sendDataToSynth(i, freqOut, ampOut);
+            translatedX = quantize(scaleDegree);
         }
+
+        if (interpolating)
+        {
+            interpolate(i, translatedX);
+        }
+
+        freqOut = pointToFrequency(translatedX);
+
+//        qDebug() << "------------\nnum: " << i << "\nfreq: " << freqOut << "\namp: " << ampOut << "\n------------";
+
+        emit sendDataToSynth(i, freqOut, ampOut);
     }
+
 }
 
 float Translator::quantize(float degree)
@@ -83,9 +81,4 @@ void Translator::interpolate(int num, float xcoord)
 float Translator::pointToFrequency(float xcoord)
 {
     return (startingFreq * pow(harmonic, range * xcoord / SystemConfiguration::image_size));
-}
-
-void Translator::makeReady()
-{
-    ready = true;
 }

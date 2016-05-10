@@ -25,7 +25,6 @@ public:
     std::vector<cv::Point>* finalPoints;
     int maxTones;
     int iterationBound;
-    bool ready = false;
 
     // TEMP VARIABLES
     cv::Point* currentPoint;
@@ -62,8 +61,6 @@ public slots:
 
     // main function
     void translate();
-
-    void makeReady();
 
 signals:
 

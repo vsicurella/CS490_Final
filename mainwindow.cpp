@@ -102,16 +102,7 @@ void MainWindow::updateCameraFeedDisplay(QImage img1, QImage img2)
     // display received images
     ui->displayProcessedFrame->setPixmap(QPixmap::fromImage(img1).scaled(ui->displayProcessedFrame->width(), ui->displayProcessedFrame->height()));
     ui->displayDetectedPoints->setPixmap(QPixmap::fromImage(img2).scaled(ui->displayDetectedPoints->width(), ui->displayDetectedPoints->height()));
-
-    // Since final points have been created, initiate the translator
-    if (!translatorInit)
-    {
-        translatorInit = true;
-        connectFinalPoints();
-    }
-
 }
-
 
 void MainWindow::startProcessing()
 {
@@ -127,6 +118,15 @@ void MainWindow::startProcessing()
 
     // connect the signal to receive images
     connect(cameraCapture,SIGNAL(capturedNewFrame(QImage,QImage)),this,SLOT(updateCameraFeedDisplay(QImage,QImage)));
+
+    audioHandler->translator->finalPoints = &(cameraCapture->processor.finalPoints);
+    audioHandler->finalPoints = &(cameraCapture->processor.finalPoints);
+
+//    connect(&cameraCapture->processor, SIGNAL(pointsReady()), audioHandler->translator, SLOT(makeReady()));
+//    connect(qTimer, SIGNAL(timeout()), audioHandler->translator, SLOT(translate()));
+    connect(timerHand, SIGNAL(timeout()), audioHandler, SLOT(checkPlaying()));
+    connect(audioHandler->translator, SIGNAL(sendNumTones(int)), audioHandler->synth, SLOT(setOscNum(int)));
+    timerHand->start(50);
 
     // start capturing process
     cameraCapture->start();
@@ -152,14 +152,7 @@ void MainWindow::on_btn_configure_clicked()
 void MainWindow::connectFinalPoints()
 {
     // point the data translator to the final finger points
-    audioHandler->translator->finalPoints = &cameraCapture->processor.finalPoints;
-    audioHandler->finalPoints = &cameraCapture->processor.finalPoints;
 
-    connect(&cameraCapture->processor, SIGNAL(pointsReady()), audioHandler->translator, SLOT(makeReady()));
-    connect(qTimer, SIGNAL(timeout()), audioHandler->translator, SLOT(translate()));
-    connect(timerHand, SIGNAL(timeout()), audioHandler, SLOT(checkPlaying()));
-    connect(audioHandler->translator, SIGNAL(sendNumTones(int)), audioHandler->synth, SLOT(setOscNum(int)));
-    timerHand->start(500);
 }
 
 //void MainWindow::sendFreq()

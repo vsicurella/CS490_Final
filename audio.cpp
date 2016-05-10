@@ -134,7 +134,10 @@ void Audio::sendFreq(int oscNum, float freq)
 void Audio::checkPlaying()
 {
     if (finalPoints->size())
+    {
         synth->playing = true;
+        translator->translate();
+    }
     else
     {
         resetBuffer();

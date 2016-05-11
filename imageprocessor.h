@@ -71,7 +71,7 @@ private:
     // calculates angle between line (p1,p2) and line (p2,p3)
     float getAngle(Point, Point, Point);
     // eleminates redundent defects that are too close to each other
-    vector<Point> removeRedundantEndPoints(vector<Vec4i>,vector<Point>);
+    std::vector<Point> removeRedundantEndPoints(vector<Vec4i>,vector<Point>);
     // find one finger which is not detected by convex defects
     Point findTopPoint(vector<Point> contours, Point);
     // represents the bounding rectangle of the largest contour
@@ -84,7 +84,6 @@ public:
     // contains final points after filter process for current frame
     vector<Point> finalPoints;
 
-
     // does preprocessing of the image and then detection/ elemination of points
     vector<Mat> getprocessedImage(Mat);
     // generates the output image based on the processed data
@@ -92,10 +91,9 @@ public:
     // get the filtered skin image
     Mat getSkin(Mat);
 
-
     QImage convertMatToQImage(Mat mat);
 
-    void sendFingerData();
+    vector<Point>* getFinalPoints();
 
 signals:
     // (point index, x value, y value

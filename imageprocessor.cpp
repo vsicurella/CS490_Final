@@ -58,6 +58,12 @@ ImageProcessor::ImageProcessor()
     framesWithResetCounter = 0;
 }
 
+vector<Point>* ImageProcessor::getFinalPoints()
+{
+    qDebug() << "got data";
+    return &finalPoints;
+}
+
 vector<Mat> ImageProcessor::getprocessedImage(Mat image)
 {
     //------------------------------------------------------
@@ -185,6 +191,7 @@ vector<Mat> ImageProcessor::getprocessedImage(Mat image)
                 // eliminate the difects by region constrant
                 vector<Vec4i> defects_stage2 = eleminateDefectsByregion(defects_stage1,contours[largestContour],boundingRectect);
 
+
                 // calculate the final points by eliminating the points that are too close to each other
                 finalPoints = removeRedundantEndPoints(defects_stage2,contours[largestContour]);
 
@@ -243,19 +250,6 @@ Mat ImageProcessor::getOutputImage()
     Mat drawingCanvas = Mat::zeros(SystemConfiguration::image_size,SystemConfiguration::image_size,CV_8UC3);
     // set the drawing image to white
     drawingCanvas.setTo(Scalar(255,255,255));
-
-//    // denotes the rectangle for which mouse pointer is valid
-//    Rect roi;
-//    // set the x position of region of interest
-//    roi.x = SystemConfiguration::topX;
-//    // set the y position of region of interest
-//    roi.y = SystemConfiguration::topY;
-//    // set the width of region of interest
-//    roi.width = SystemConfiguration::bottomX - SystemConfiguration::topX;
-//    // set the height of region of interest
-//    roi.height = SystemConfiguration::bottomY - SystemConfiguration::topY;
-//    // draw the valid mouse region for display purpose
-//    rectangle(drawingCanvas,roi,Scalar(150,150,150),-1);
 
     // iterate through each points in the set of all final points
     for(int i=0;i<finalPoints.size();i++)

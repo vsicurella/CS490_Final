@@ -68,6 +68,8 @@ signals:
     void sendDataToSynth(int, float, float);
     void sendNumTones(int);
 
+    void connectFP();
+
 };
 
 #endif // TRANSLATOR_H

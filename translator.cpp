@@ -38,7 +38,7 @@ void Translator::translate()
         translatedX = currentPoint->x;
         ampOut = 1 - (currentPoint->y / (float) SystemConfiguration::image_size);
 
-        scaleDegree = (range * currentPoint->x/(float) SystemConfiguration::image_size);
+        scaleDegree = (divisions * range * currentPoint->x/(float) SystemConfiguration::image_size);
 
         if (quantizing)
         {
@@ -61,7 +61,8 @@ void Translator::translate()
 
 float Translator::quantize(float degree)
 {
-    return round(divisions * log(degree)/log(harmonic)) * SystemConfiguration::image_size / range;
+    float newDeg = round(degree);
+    return newDeg * SystemConfiguration::image_size / (divisions * range);
 }
 
 void Translator::interpolate(int num, float xcoord)

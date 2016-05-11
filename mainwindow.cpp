@@ -45,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     qTimer = new QTimer(this);
     timerHand = new QTimer(this);
+
 }
 
 void MainWindow::startAutoMode(int devId)
@@ -119,18 +120,10 @@ void MainWindow::startProcessing()
     // connect the signal to receive images
     connect(cameraCapture,SIGNAL(capturedNewFrame(QImage,QImage)),this,SLOT(updateCameraFeedDisplay(QImage,QImage)));
 
-    audioHandler->translator->finalPoints = &(cameraCapture->processor.finalPoints);
-    audioHandler->finalPoints = &(cameraCapture->processor.finalPoints);
-
-//    connect(&cameraCapture->processor, SIGNAL(pointsReady()), audioHandler->translator, SLOT(makeReady()));
-//    connect(qTimer, SIGNAL(timeout()), audioHandler->translator, SLOT(translate()));
-    connect(timerHand, SIGNAL(timeout()), audioHandler, SLOT(checkPlaying()));
-    connect(audioHandler->translator, SIGNAL(sendNumTones(int)), audioHandler->synth, SLOT(setOscNum(int)));
-    timerHand->start(50);
-
     // start capturing process
     cameraCapture->start();
     audioThread->start();
+
     qTimer->start(1);
 }
 
@@ -151,8 +144,16 @@ void MainWindow::on_btn_configure_clicked()
 
 void MainWindow::connectFinalPoints()
 {
+    qDebug() << "got signal!";
     // point the data translator to the final finger points
+    audioHandler->translator->finalPoints = cameraCapture->processor.getFinalPoints();
+    audioHandler->finalPoints = cameraCapture->processor.getFinalPoints();
 
+    connect(timerHand, SIGNAL(timeout()), audioHandler, SLOT(checkPlaying()));
+    connect(audioHandler->translator, SIGNAL(sendNumTones(int)), audioHandler->synth, SLOT(setOscNum(int)));
+    connect(qTimer, SIGNAL(timeout()), audioHandler, SLOT(run()));
+
+    timerHand->start(5);
 }
 
 //void MainWindow::sendFreq()

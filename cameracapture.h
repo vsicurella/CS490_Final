@@ -22,6 +22,7 @@
 #include <opencv2/opencv.hpp>
 #include "imageprocessor.h"
 #include <QImage>
+#include <QDebug>
 
 using namespace cv;
 
@@ -34,7 +35,7 @@ public:
 
 signals:
     void capturedNewFrame(QImage, QImage);
-    void sendFinalPoints();
+    void sendFinalPoints(std::vector<Point>*);
 
 private:
     VideoCapture captureDevice;

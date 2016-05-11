@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     imageprocessor.cpp \
     systemconfiguration.cpp \
     translator.cpp \
-    synthesizersettings.cpp
+    synthesizersettings.cpp \
+    overlay.cpp
 
 HEADERS  += mainwindow.h \
     synth.h \
@@ -36,7 +37,8 @@ HEADERS  += mainwindow.h \
     imageprocessor.h \
     systemconfiguration.h \
     translator.h \
-    synthesizersettings.h
+    synthesizersettings.h \
+    overlay.h
 
 FORMS    += \
     configurationwindow.ui \

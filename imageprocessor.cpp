@@ -155,7 +155,7 @@ vector<Mat> ImageProcessor::getprocessedImage(Mat image)
     if(largestContour != -1) {
         // apply Ramer–Douglas–Peucker algorithm to smooth counour points
         approxPolyDP(Mat(contours[largestContour]),contours[largestContour],SystemConfiguration::dp_epsilon,true);
-
+        
         // draw the largest smooth contour points for display purpose
         drawContours( drawingCanvas, contours, largestContour, Scalar(100,100,100), -1);
 
@@ -473,7 +473,12 @@ QImage ImageProcessor::convertMatToQImage(Mat mat)
         return img;
     }
     // 8-bits unsigned, NO. OF CHANNELS=3
-    else if(mat.type()==CV_8UC3)
+    if(mat.type() == CV_8UC4)
+    {
+        cvtColor(mat, mat, CV_BGRA2BGR);
+    }
+
+    if(mat.type()==CV_8UC3)
     {
         // Copy input Mat
         const uchar *qImageBuffer = (const uchar*)mat.data;

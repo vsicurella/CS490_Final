@@ -91,6 +91,7 @@ public:
     // get the filtered skin image
     Mat getSkin(Mat);
 
+    Mat overlayAlphaToBGR(Mat dest, Mat over);
     QImage convertMatToQImage(Mat mat);
 
     vector<Point>* getFinalPoints();

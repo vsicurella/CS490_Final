@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>670</width>
-    <height>664</height>
+    <width>1037</width>
+    <height>879</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Control Center</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="resources.qrc">
+   <iconset>
     <normaloff>:/icons/logo/logo.png</normaloff>:/icons/logo/logo.png</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
@@ -304,7 +304,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>670</width>
+     <width>1037</width>
      <height>25</height>
     </rect>
    </property>
@@ -321,9 +321,7 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources>
-  <include location="resources.qrc"/>
- </resources>
+ <resources/>
  <connections/>
  <slots>
   <slot>startBtnClicked()</slot>

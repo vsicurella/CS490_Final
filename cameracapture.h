@@ -24,6 +24,8 @@
 #include <QImage>
 #include <QDebug>
 
+#include "overlay.h"
+
 using namespace cv;
 
 class CameraCapture: public QThread
@@ -32,6 +34,9 @@ class CameraCapture: public QThread
 public:
     CameraCapture(VideoCapture);
     ImageProcessor processor;
+    Overlay overlay;
+
+    void addPointsToOverlay();
 
 signals:
     void capturedNewFrame(QImage, QImage);

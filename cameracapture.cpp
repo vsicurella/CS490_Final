@@ -25,12 +25,23 @@ using namespace cv;
 CameraCapture::CameraCapture(VideoCapture capture) : QThread()
 {
     captureDevice = capture;
+    overlay.setOverlay(overlay.generate12Tone(3));
+}
+
+void CameraCapture::addPointsToOverlay()
+{
+    for (int i = 0; i < processor.finalPoints.size(); i++)
+    {
+        overlay.addDot(processor.finalPoints[i]);
+    }
 }
 
 void CameraCapture::run()
 {
     while(1)
     {
+        overlay.resetOverlayAdd();
+
         // create a matrix to store captured image
         Mat originalImageMat(SystemConfiguration::image_size ,SystemConfiguration::image_size,CV_8UC3);
         // check if capture is success
@@ -47,11 +58,14 @@ void CameraCapture::run()
             Mat skinImageMat = processor.getSkin(resizedImageMat);
             // get processed images
             vector<Mat> processedImageMat = processor.getprocessedImage(skinImageMat);
+            // add points to overlay
+            addPointsToOverlay();
+            // add overlay
+            Mat processedOverlay = overlay.applyOverlay(processedImageMat[1]);
             // create display image
             QImage binaryImage = processor.convertMatToQImage(processedImageMat[0]);
             // create display image
-            QImage processedImage = processor.convertMatToQImage(processedImageMat[1]);
-
+            QImage processedImage = processor.convertMatToQImage(processedOverlay);
 
             emit(capturedNewFrame(binaryImage, processedImage));
         }

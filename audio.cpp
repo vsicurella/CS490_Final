@@ -24,8 +24,9 @@ void Audio::init()
     device = "default";
     buffer = new float[CHUNK_SIZE]();
     synth = new Synth(&SAMPLE_RATE, &CHUNK_SIZE);
-    translator = new Translator(110, 2, 2, false, 31, false, 3);
-    synth->setTone(Wavetable::SAW);
+    // baseHz, octave, range, quantize, divisions, interpolate, steps
+    translator = new Translator(110, 2, 3, true, 12, false, 3);
+    synth->setTone(Wavetable::SINE);
 
     prepareDevice();
 

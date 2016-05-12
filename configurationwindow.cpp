@@ -81,6 +81,12 @@ ConfigurationWindow::~ConfigurationWindow()
     delete ui;
 }
 
+void ConfigurationWindow::disableStuff()
+{
+    ui->srBox->setEnabled(false);
+    ui->bufferSizeBox->setEnabled(false);
+}
+
 void ConfigurationWindow::on_in_image_size_valueChanged(int value)
 {
     SystemConfiguration::image_size = value;
@@ -212,3 +218,68 @@ void ConfigurationWindow::on_saveBtn_clicked()
     config.saveSettings();
 }
 
+
+void ConfigurationWindow::on_volumeSld_sliderMoved(int position)
+{
+    float display = position / 999.0;
+    ui->volLbl->setText(QString("%1 %").arg(display*100));
+
+    emit volume(display);
+}
+
+void ConfigurationWindow::on_baseHzSld_sliderMoved(int position)
+{
+    float display = position / 1000.0;
+    ui->baseHzBox->setValue(display);
+
+    emit pitch(display);
+}
+
+void ConfigurationWindow::on_baseHzBox_valueChanged(double arg1)
+{
+    int display = (int) (arg1*1000);
+    ui->baseHzSld->setValue(display);
+
+    emit pitch(arg1);
+}
+
+void ConfigurationWindow::on_isMuted_clicked(bool checked)
+{
+    emit playing(checked);
+}
+
+void ConfigurationWindow::on_rangeBox_valueChanged(int arg1)
+{
+    emit rng(arg1);
+}
+
+void ConfigurationWindow::on_toneBox_activated(int index)
+{
+    emit tn(index);
+}
+
+void ConfigurationWindow::on_isQuantized_clicked(bool checked)
+{
+    emit quantized(checked);
+}
+
+void ConfigurationWindow::on_harmBox_valueChanged(int arg1)
+{
+    emit harmonic(arg1);
+}
+
+void ConfigurationWindow::on_divBox_valueChanged(int arg1)
+{
+    emit divisions(arg1);
+}
+
+void ConfigurationWindow::on_overlayOn_clicked(bool checked)
+{
+    emit overlayOn(checked);
+}
+
+void ConfigurationWindow::on_overlayHeightSld_sliderMoved(int position)
+{
+    float display = position / 99.0;
+    ui->overHeightLbl->setText(QString("%1 %").arg(display*100));
+}

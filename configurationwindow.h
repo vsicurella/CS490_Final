@@ -31,6 +31,9 @@ class ConfigurationWindow : public QMainWindow
 
 public:
     explicit ConfigurationWindow(QWidget *parent = 0);
+
+    void disableStuff();
+
     ~ConfigurationWindow();
 
 private slots:
@@ -55,6 +58,42 @@ private slots:
     void on_in_rh_thresh_valueChanged(int value);
     void on_in_rpd_thresh_valueChanged(int value);
     void on_saveBtn_clicked();
+
+    void on_volumeSld_sliderMoved(int position);
+
+    void on_baseHzSld_sliderMoved(int position);
+
+    void on_baseHzBox_valueChanged(double arg1);
+
+    void on_isMuted_clicked(bool checked);
+
+    void on_rangeBox_valueChanged(int arg1);
+
+    void on_toneBox_activated(int index);
+
+    void on_isQuantized_clicked(bool checked);
+
+    void on_harmBox_valueChanged(int arg1);
+
+    void on_divBox_valueChanged(int arg1);
+
+    void on_overlayOn_clicked(bool checked);
+
+    void on_overlayHeightSld_sliderMoved(int position);
+
+signals:
+    void sr(int);
+    void bs(int);
+    void volume(float);
+    void pitch(float);
+    void playing(bool);
+    void tn(int);
+    void rng(int);
+    void quantized(bool);
+    void harmonic(int);
+    void divisions(int);
+    void overlayOn(bool);
+    void overlayHeight(float);
 
 private:
     Ui::ConfigurationWindow *ui;

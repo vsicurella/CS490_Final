@@ -24,7 +24,6 @@ SOURCES += main.cpp\
     imageprocessor.cpp \
     systemconfiguration.cpp \
     translator.cpp \
-    synthesizersettings.cpp \
     overlay.cpp
 
 HEADERS  += mainwindow.h \
@@ -37,12 +36,10 @@ HEADERS  += mainwindow.h \
     imageprocessor.h \
     systemconfiguration.h \
     translator.h \
-    synthesizersettings.h \
     overlay.h
 
 FORMS    += \
     configurationwindow.ui \
-    mainwindow.ui \
-    synthesizersettings.ui
+    mainwindow.ui
 
 LIBS += `pkg-config opencv --libs alsa --libs`

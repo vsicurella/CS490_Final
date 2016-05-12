@@ -47,12 +47,40 @@ public:
     ~MainWindow();
 
     Audio* audioHandler;
-
     QThread* audioThread;
 
-    bool playing = false;
+    // Audio parameters
+    int sample_rate;
+    int buffer_size;
 
-    bool translatorInit = false;
+    bool isPlaying;
+    float masterVol;
+    float basePitch;
+    int range;
+    int tone;
+
+    bool isQuantized;
+    int harmNum;
+    int divisons;
+
+    bool overOn;
+    float overHeight;
+
+    void connectParameters();
+
+public slots:
+    void set_sr(int sr);
+    void set_bs(int bs);
+    void set_volume(float vol);
+    void set_pitch(float pitch);
+    void set_playing(bool playing);
+    void set_tone(int tn);
+    void set_range(int rng);
+    void set_quantized(bool quant);
+    void set_harmonic(int harm);
+    void set_divisions(int div);
+    void set_overlayOn(bool overOn);
+    void set_overlayHeight(float overHeight);
 
 private slots:
     // a slot to receive start button click signal
@@ -61,7 +89,6 @@ private slots:
     void updateCameraFeedDisplay(QImage, QImage);
     // slot to receive configure button click signal
     void on_btn_configure_clicked();
-
     void connectFinalPoints();
 
 private:

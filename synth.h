@@ -32,6 +32,8 @@ public:
     float frequency;
     float amplitude;
 
+    float masterVolume = 1;
+
     bool playing;
 
     unsigned int waveShape;

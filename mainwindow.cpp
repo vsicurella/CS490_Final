@@ -32,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     // create a new system configuration object
     SystemConfiguration config;
+
     // load the settings to system configuration
     config.loadSettings();
 
@@ -39,7 +40,6 @@ MainWindow::MainWindow(QWidget *parent) :
     configWindow = NULL;
 
     audioThread = new QThread;
-    audioHandler = new Audio(48000, 256);
 
     qDebug() << "From main thread: " << QThread::currentThreadId();
 
@@ -109,10 +109,15 @@ void MainWindow::startProcessing()
 {
     // disable start brn
     ui->startBtn->setEnabled(false);
+
     // create a new camera capture object
     cameraCapture = new CameraCapture(captureDevice);
+    cameraCapture->overlay.setOverlay(cameraCapture->overlay.generate12Tone(range));
 
     // set up audio
+    configWindow->disableStuff();
+//    connectParameters();
+    audioHandler = new Audio(sample_rate, buffer_size);
     audioHandler->moveToThread(audioThread);
     connect(qTimer, SIGNAL(timeout()), audioHandler, SLOT(run()));
     connect(audioHandler, SIGNAL(initDone()), this, SLOT(connectFinalPoints()));
@@ -156,36 +161,80 @@ void MainWindow::connectFinalPoints()
     timerHand->start(5);
 }
 
-//void MainWindow::sendFreq()
-//{
-////    finalPoints = cameraCapture->getFinalPoints();
+void MainWindow::connectParameters()
+{
+    connect(configWindow, SIGNAL(sr(int)), this, SLOT(set_sr(int)));
+    connect(configWindow, SIGNAL(bs(int)), this, SLOT(set_bs(int)));
+    connect(configWindow, SIGNAL(volume(float)), this, SLOT(set_volume(float)));
+    connect(configWindow, SIGNAL(pitch(float)), this, SLOT(set_pitch(float)));
+    connect(configWindow, SIGNAL(playing(bool)), this, SLOT(set_playing(bool)));
+    connect(configWindow, SIGNAL(tn(int)), this, SLOT(set_tone(int)));
+    connect(configWindow, SIGNAL(rng(int)), this, SLOT(set_range(int)));
+    connect(configWindow, SIGNAL(quantized(bool)), this, SLOT(set_quantized(bool)));
+    connect(configWindow, SIGNAL(harmonic(int)), this, SLOT(set_harmonic(int)));
+    connect(configWindow, SIGNAL(divisions(int)), this, SLOT(set_divisions(int)));
+    connect(configWindow, SIGNAL(overlayOn(bool)), this, SLOT(set_overlayOn(bool)));
+    connect(configWindow, SIGNAL(overlayHeight(float)), this, SLOT(set_overlayHeight(float)));
+}
 
-//    int numOsc = finalPoints->size() - audioHandler->synth->oscillators.size();
+void MainWindow::set_sr(int sr)
+{
+    sample_rate = sr;
+}
 
-//    if (finalPoints->size() > 0)
-//    {
-//        audioHandler->synth->playing = true;
-////        audioHandler->sendAmp(
-////                    (SystemConfiguration::image_size - finalPoints->at(0).y) / (float) SystemConfiguration::image_size);
-//        audioHandler->synth->setOscNum(numOsc);
+void MainWindow::set_bs(int bs)
+{
+    buffer_size = bs;
+}
 
-//        vector<Point>::iterator it;
-//        int osc = 0; // number of oscillators
-//        Point temp;
+void MainWindow::set_volume(float vol)
+{
+    audioHandler->synth->masterVolume = vol;
+}
 
-//        for (it = finalPoints->begin(); it != finalPoints->end(); it++, osc++)
-//        {
-//            temp = *it;
-//            audioHandler->sendFreq(osc, temp.x*2);
-////            qDebug() << "Finger #" << osc+1 << "x: " << temp.x << "\t y: " << temp.y;
-////            qDebug() << "number of osc: " << numOsc;
-//        }
-//    }
+void MainWindow::set_pitch(float pitch)
+{
+    audioHandler->translator->startingFreq = pitch;
+}
 
-//    else
-//    {
-//        audioHandler->synth->setOscNum(0);
-//        audioHandler->synth->clearBuffer();
-//        audioHandler->synth->playing = false;
-//    }
-//}
+void MainWindow::set_playing(bool playing)
+{
+    audioHandler->synth->playing = playing;
+}
+
+void MainWindow::set_tone(int tn)
+{
+    audioHandler->synth->setTone(tn);
+}
+
+void MainWindow::set_range(int rng)
+{
+    audioHandler->translator->range = rng;
+}
+
+void MainWindow::set_quantized(bool quant)
+{
+    audioHandler->translator->quantizing = quant;
+}
+
+void MainWindow::set_harmonic(int harm)
+{
+    audioHandler->translator->harmonic = 2;
+}
+
+void MainWindow::set_divisions(int div)
+{
+    audioHandler->translator->divisions = div;
+}
+
+void MainWindow::set_overlayOn(bool overOn)
+{
+    cameraCapture->overlay.showing = overOn;
+}
+
+void MainWindow::set_overlayHeight(float overHeight)
+{
+    cameraCapture->overlay.height = (SystemConfiguration::image_size * overHeight);
+    cameraCapture->overlay.update();
+    cameraCapture->overlay.setOverlay(cameraCapture->overlay.generate12Tone(range));
+}

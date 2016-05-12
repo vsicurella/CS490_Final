@@ -78,3 +78,9 @@ Mat Overlay::applyOverlay(Mat dest)
 
     return newMat;
 }
+
+void Overlay::update()
+{
+    height = size * heightFactor;
+    yPos = size - height;
+}

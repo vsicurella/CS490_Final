@@ -21,14 +21,16 @@ public:
     Mat overlayBase, overlayAdd;
 
     int size = SystemConfiguration::image_size;
-    int height = size / 6;
+    float heightFactor = 0.15;
+    int height = size * heightFactor;
     int yPos = size - height;
-
 
     void setOverlay(Mat newOverlay);
     void resetOverlayAdd();
     void addDot(Point pt);
     int imageYtoOverlayY(int y);
+    void update();
+
     Mat generatePitchMap(int divisions);
     Mat generate12Tone(int range);
     Mat applyOverlay(Mat dest);

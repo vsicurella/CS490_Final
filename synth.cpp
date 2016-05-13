@@ -12,6 +12,8 @@ Synth::Synth(int* sr, int* cs)
     amplitude = 0.5;
 
     playing = false;
+    masterPlaying = true;
+
     wavetable = (Wavetable::genWaveTable(SAMPLE_RATE, Wavetable::SINE));
 
 //    addOsc(1);

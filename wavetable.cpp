@@ -16,8 +16,26 @@ void Wavetable::genWaveTable(int* SAMPLE_RATE, int waveCode, std::vector<float>&
 
     case TRI:
     {
-        for (int i = 0; i < *SAMPLE_RATE; i++)
-            table.push_back(std::abs(fmod(((i / (float) *SAMPLE_RATE) * 2), 1.0) - 1) - 1);
+        // can be done in one loop
+        for (int i = 0; i < *SAMPLE_RATE / 4.0; i++)
+        {
+            table.push_back((i * 4.0) / (float) *SAMPLE_RATE);
+        }
+
+        for (int i = 0; i < *SAMPLE_RATE / 4.0; i++)
+        {
+            table.push_back((*SAMPLE_RATE - i * 4.0) / (float) *SAMPLE_RATE);
+        }
+
+        for (int i = 0; i < *SAMPLE_RATE / 4.0; i++)
+        {
+            table.push_back((i * -4.0) / (float) *SAMPLE_RATE);
+        }
+
+        for (int i = 0; i < *SAMPLE_RATE / 4.0; i++)
+        {
+            table.push_back((-1 * *SAMPLE_RATE + i * 4.0) / (float) *SAMPLE_RATE);
+        }
 
         break;
     }
@@ -25,7 +43,7 @@ void Wavetable::genWaveTable(int* SAMPLE_RATE, int waveCode, std::vector<float>&
     case SAW:
     {
         for (int i = 0; i < *SAMPLE_RATE; i++)
-            table.push_back(fmod(((i / (float) *SAMPLE_RATE) * 2), 1.0) - 1);
+            table.push_back(fmod(((i / (float) *SAMPLE_RATE + 0.25) * 2), 1.0) - 1);
 
         break;
     }

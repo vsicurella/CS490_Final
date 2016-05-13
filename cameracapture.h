@@ -37,6 +37,7 @@ public:
     Overlay overlay;
 
     void addPointsToOverlay();
+    QImage convertMatToQImage(Mat mat);
 
 signals:
     void capturedNewFrame(QImage, QImage);

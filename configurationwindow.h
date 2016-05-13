@@ -20,6 +20,7 @@
 #define CONFIGURATIONWINDOW_H
 
 #include <QMainWindow>
+#include <cmath>
 
 namespace Ui {
 class ConfigurationWindow;
@@ -31,10 +32,10 @@ class ConfigurationWindow : public QMainWindow
 
 public:
     explicit ConfigurationWindow(QWidget *parent = 0);
+    ~ConfigurationWindow();
 
     void disableStuff();
 
-    ~ConfigurationWindow();
 
 private slots:
     void on_in_image_size_valueChanged(int value);
@@ -81,12 +82,15 @@ private slots:
 
     void on_overlayHeightSld_sliderMoved(int position);
 
+    void on_numTones_valueChanged(int arg1);
+
 signals:
     void sr(int);
     void bs(int);
     void volume(float);
     void pitch(float);
     void playing(bool);
+    void numTones(int);
     void tn(int);
     void rng(int);
     void quantized(bool);

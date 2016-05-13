@@ -37,9 +37,13 @@ MainWindow::MainWindow(QWidget *parent) :
     config.loadSettings();
 
     ui->setupUi(this);
-    configWindow = NULL;
+//    configWindow = NULL;
+    configWindow = new ConfigurationWindow();
 
     audioThread = new QThread;
+
+    connect(configWindow, SIGNAL(sr(int)), this, SLOT(set_sr(int)));
+    connect(configWindow, SIGNAL(bs(int)), this, SLOT(set_bs(int)));
 
     qDebug() << "From main thread: " << QThread::currentThreadId();
 
@@ -61,7 +65,7 @@ void MainWindow::startAutoMode(int devId)
         // create a new message box
         QMessageBox messageBox(this);
         // show warning message
-        messageBox.warning(this,"Warning","Can not open Camera Device",QMessageBox::Ok);
+        messageBox.warning(this, "Warning", "Can not open Camera Device", QMessageBox::Ok);
         // return from this function as capture device is not correct
         return;
     }
@@ -116,7 +120,7 @@ void MainWindow::startProcessing()
 
     // set up audio
     configWindow->disableStuff();
-//    connectParameters();
+    connectParameters();
     audioHandler = new Audio(sample_rate, buffer_size);
     audioHandler->moveToThread(audioThread);
     connect(qTimer, SIGNAL(timeout()), audioHandler, SLOT(run()));
@@ -149,7 +153,6 @@ void MainWindow::on_btn_configure_clicked()
 
 void MainWindow::connectFinalPoints()
 {
-    qDebug() << "got signal!";
     // point the data translator to the final finger points
     audioHandler->translator->finalPoints = cameraCapture->processor.getFinalPoints();
     audioHandler->finalPoints = cameraCapture->processor.getFinalPoints();
@@ -163,11 +166,10 @@ void MainWindow::connectFinalPoints()
 
 void MainWindow::connectParameters()
 {
-    connect(configWindow, SIGNAL(sr(int)), this, SLOT(set_sr(int)));
-    connect(configWindow, SIGNAL(bs(int)), this, SLOT(set_bs(int)));
     connect(configWindow, SIGNAL(volume(float)), this, SLOT(set_volume(float)));
     connect(configWindow, SIGNAL(pitch(float)), this, SLOT(set_pitch(float)));
     connect(configWindow, SIGNAL(playing(bool)), this, SLOT(set_playing(bool)));
+    connect(configWindow, SIGNAL(numTones(int)), this, SLOT(set_numTone(int)));
     connect(configWindow, SIGNAL(tn(int)), this, SLOT(set_tone(int)));
     connect(configWindow, SIGNAL(rng(int)), this, SLOT(set_range(int)));
     connect(configWindow, SIGNAL(quantized(bool)), this, SLOT(set_quantized(bool)));
@@ -194,12 +196,20 @@ void MainWindow::set_volume(float vol)
 
 void MainWindow::set_pitch(float pitch)
 {
+//    float factor = Translator::getFactor(400)/1e4f;
+//    float freq = Translator::getDegreeFreq(20, pitch*factor);
+
     audioHandler->translator->startingFreq = pitch;
 }
 
 void MainWindow::set_playing(bool playing)
 {
-    audioHandler->synth->playing = playing;
+    audioHandler->synth->masterPlaying = !playing;
+}
+
+void MainWindow::set_numTone(int num)
+{
+    audioHandler->translator->maxTones = num;
 }
 
 void MainWindow::set_tone(int tn)
@@ -209,7 +219,10 @@ void MainWindow::set_tone(int tn)
 
 void MainWindow::set_range(int rng)
 {
+    range = rng;
     audioHandler->translator->range = rng;
+    cameraCapture->overlay.update();
+    cameraCapture->overlay.setOverlay(cameraCapture->overlay.generate12Tone(range));
 }
 
 void MainWindow::set_quantized(bool quant)
@@ -219,7 +232,7 @@ void MainWindow::set_quantized(bool quant)
 
 void MainWindow::set_harmonic(int harm)
 {
-    audioHandler->translator->harmonic = 2;
+    audioHandler->translator->harmonic = harm;
 }
 
 void MainWindow::set_divisions(int div)
@@ -234,7 +247,7 @@ void MainWindow::set_overlayOn(bool overOn)
 
 void MainWindow::set_overlayHeight(float overHeight)
 {
-    cameraCapture->overlay.height = (SystemConfiguration::image_size * overHeight);
+    cameraCapture->overlay.heightFactor = overHeight;
     cameraCapture->overlay.update();
     cameraCapture->overlay.setOverlay(cameraCapture->overlay.generate12Tone(range));
 }

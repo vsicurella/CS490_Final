@@ -31,37 +31,6 @@ class ImageProcessor: public QObject
 
 private:
 
-    // contains number of frames for which double click gesture has been made
-    int framesWithDoubleClickActivationCounter;
-    // contains number of frames for which double click gesture has not been made
-    int framesWithDoubleClickDeactivationCounter;
-    // contains number of frames for which click gesture has been made
-    int framesWithClickActivationCounter;
-    // contains number of frames for which click gesture has not been made
-    int framesWithClickDeactivationCounter;
-    // contains number of frames for which mouse down gesture has been made
-    int framesWithMouseDownActivationCounter;
-    // contains number of frames for which mouse down gesture has not been made
-    int framesWithMouseDownDeactivationCounter;
-    // contains number of frames for which right click gesture has been made
-    int framesWithRightClickActivationCounter;
-    // contains number of frames for which right click gesture has not been made
-    int framesWithRightClickDeactivationCounter;
-    // contains number of frames for which mouse events reset is requested
-    int framesWithResetCounter;
-    // indicates if mouse button is down
-    bool isMouseDown;
-    // indicates if mouse click is activated
-    bool isClickActivated;
-    // indicates if mouse right click is activated
-    bool isRightClickActivated;
-    // indicates if mouse double click is activated
-    bool isDoubleClickActivated;
-    // desktop widget to get desktop screen size
-    QDesktopWidget widget;
-    // pointer manager object
-
-
     // eleminates convex defects by its dimention and provides filtered defects
     vector<Vec4i> eleminateDefectsByDimentation(vector<Vec4i>,vector<Point>);
     // eleminates convex defects by its bounding box height region
@@ -91,15 +60,9 @@ public:
     // get the filtered skin image
     Mat getSkin(Mat);
 
-    Mat overlayAlphaToBGR(Mat dest, Mat over);
-    QImage convertMatToQImage(Mat mat);
-
     vector<Point>* getFinalPoints();
+    void printThread();
 
-signals:
-    // (point index, x value, y value
-    void sendFinalPoint(int, int, int);
-    void pointsReady();
 };
 
 #endif // IMAGEPROCESSOR_H

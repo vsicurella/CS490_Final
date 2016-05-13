@@ -22,45 +22,22 @@
 #include <string>
 #include "systemconfiguration.h"
 #include <QDebug>
+#include <QThread>
 
 using namespace cv;
 
 ImageProcessor::ImageProcessor()
 {
-    //------------------------------------------------------
-    // set variables to defaults
-    //------------------------------------------------------
-    // set right click event to false
-    isRightClickActivated = false;
-    // set mouse down event to false
-    isMouseDown = false;
-    // set mouse click event to false
-    isClickActivated = false;
-    // set mouse double click event to false
-    isDoubleClickActivated = false;
-    // set mouse down deactivation counter to zero
-    framesWithMouseDownDeactivationCounter = 0;
-    // set mouse down activation counter to zero
-    framesWithMouseDownActivationCounter = 0;
-    // set mouse click activation counter to zero
-    framesWithClickActivationCounter = 0;
-    // set mouse click deactivation counter to zero
-    framesWithClickDeactivationCounter = 0;
-    // set mouse double click activation counter to zero
-    framesWithDoubleClickActivationCounter = 0;
-    // set mouse double click deactivation counter to zero
-    framesWithDoubleClickDeactivationCounter = 0;
-    // set mouse right click activation counter to zero
-    framesWithRightClickActivationCounter = 0;
-    // set mouse right click deactivation counter to zero
-    framesWithRightClickDeactivationCounter = 0;
-    // set mouse event reset counter to zero
-    framesWithResetCounter = 0;
+
+}
+
+void ImageProcessor::printThread()
+{
+    qDebug() << "Processor thread: " << QThread::currentThreadId();
 }
 
 vector<Point>* ImageProcessor::getFinalPoints()
 {
-    qDebug() << "got data";
     return &finalPoints;
 }
 
@@ -233,8 +210,6 @@ vector<Mat> ImageProcessor::getprocessedImage(Mat image)
     // add drawing image to set of output images
     outputs.push_back(drawingCanvas);
     // return set of output images
-
-    emit pointsReady();
 
     return outputs;
 }
@@ -456,39 +431,3 @@ Mat ImageProcessor::getSkin(Mat input)
     return skin;
 }
 
-QImage ImageProcessor::convertMatToQImage(Mat mat)
-{
-    // 8-bits unsigned, NO. OF CHANNELS=1
-    if(mat.type()==CV_8UC1)
-    {
-        // Set the color table (used to translate colour indexes to qRgb values)
-        QVector<QRgb> colorTable;
-        for (int i=0; i<256; i++)
-            colorTable.push_back(qRgb(i,i,i));
-        // Copy input Mat
-        const uchar *qImageBuffer = (const uchar*)mat.data;
-        // Create QImage with same dimensions as input Mat
-        QImage img(qImageBuffer, mat.cols, mat.rows, mat.step, QImage::Format_Indexed8);
-        img.setColorTable(colorTable);
-        return img;
-    }
-    // 8-bits unsigned, NO. OF CHANNELS=3
-    if(mat.type() == CV_8UC4)
-    {
-        cvtColor(mat, mat, CV_BGRA2BGR);
-    }
-
-    if(mat.type()==CV_8UC3)
-    {
-        // Copy input Mat
-        const uchar *qImageBuffer = (const uchar*)mat.data;
-        // Create QImage with same dimensions as input Mat
-        QImage img(qImageBuffer, mat.cols, mat.rows, mat.step, QImage::Format_RGB888);
-        return img.rgbSwapped();
-    }
-    else
-    {
-        qDebug() << "ERROR: Mat could not be converted to QImage.";
-        return QImage();
-    }
-}

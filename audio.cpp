@@ -25,7 +25,7 @@ void Audio::init()
     buffer = new float[CHUNK_SIZE]();
     synth = new Synth(&SAMPLE_RATE, &CHUNK_SIZE);
     // baseHz, octave, range, quantize, divisions, interpolate, steps
-    translator = new Translator(110, 2, 3, true, 12, false, 3);
+    translator = new Translator(110, 2, 3, false, 12, false, 3);
     synth->setTone(Wavetable::SINE);
 
     prepareDevice();
@@ -56,7 +56,7 @@ void Audio::run()
         qDebug() << "Audio components initialized.";
     }
 
-    if (synth->isPlaying())
+    if (synth->masterPlaying && synth->isPlaying())
     {
         replaceBuffer(synth->genChunk());
         playBuffer();

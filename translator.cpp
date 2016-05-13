@@ -45,6 +45,7 @@ void Translator::translate()
             translatedX = quantize(scaleDegree);
         }
 
+        // DOES NOT WORK YET
         if (interpolating)
         {
             interpolate(i, translatedX);
@@ -82,4 +83,14 @@ void Translator::interpolate(int num, float xcoord)
 float Translator::pointToFrequency(float xcoord)
 {
     return (startingFreq * pow(harmonic, range * xcoord / SystemConfiguration::image_size));
+}
+
+float Translator::getDegreeFreq(float base, float degree)
+{
+    return (base * pow(harmonic, degree));
+}
+
+float Translator::getFactor(float interval)
+{
+    return log(interval)/log(harmonic);
 }

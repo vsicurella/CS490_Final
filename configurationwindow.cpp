@@ -20,7 +20,7 @@
 #include "ui_configurationwindow.h"
 #include "systemconfiguration.h"
 
-ConfigurationWindow::ConfigurationWindow(QWidget *parent) :
+ConfigurationWindow::ConfigurationWindow(QWidget *parent):
     QMainWindow(parent),
     ui(new Ui::ConfigurationWindow)
 {
@@ -221,7 +221,7 @@ void ConfigurationWindow::on_saveBtn_clicked()
 
 void ConfigurationWindow::on_volumeSld_sliderMoved(int position)
 {
-    float display = position / 999.0;
+    float display = position / 1000.0;
     ui->volLbl->setText(QString("%1 %").arg(display*100));
 
     emit volume(display);
@@ -229,7 +229,9 @@ void ConfigurationWindow::on_volumeSld_sliderMoved(int position)
 
 void ConfigurationWindow::on_baseHzSld_sliderMoved(int position)
 {
-    float display = position / 1000.0;
+//    float factor = std::log(400)/std::log(ui->harmBox->value()) / 1e4f;
+//    float display = 20 * std::pow(ui->harmBox->value(), position*factor);
+    float display = position / 1e3f;
     ui->baseHzBox->setValue(display);
 
     emit pitch(display);
@@ -237,7 +239,7 @@ void ConfigurationWindow::on_baseHzSld_sliderMoved(int position)
 
 void ConfigurationWindow::on_baseHzBox_valueChanged(double arg1)
 {
-    int display = (int) (arg1*1000);
+    int display = (int) (arg1*1e3f);
     ui->baseHzSld->setValue(display);
 
     emit pitch(arg1);
@@ -280,6 +282,12 @@ void ConfigurationWindow::on_overlayOn_clicked(bool checked)
 
 void ConfigurationWindow::on_overlayHeightSld_sliderMoved(int position)
 {
-    float display = position / 99.0;
+    float display = position / 100.0;
     ui->overHeightLbl->setText(QString("%1 %").arg(display*100));
+    emit overlayHeight(display);
+}
+
+void ConfigurationWindow::on_numTones_valueChanged(int arg1)
+{
+    emit numTones(arg1);
 }

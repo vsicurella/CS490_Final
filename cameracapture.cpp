@@ -37,6 +37,9 @@ void CameraCapture::addPointsToOverlay()
 
 void CameraCapture::run()
 {
+    qDebug() << "Capture thread: " << QThread::currentThreadId();
+    processor.printThread();
+
     while(1)
     {
         if (overlay.showing)
@@ -60,7 +63,7 @@ void CameraCapture::run()
             vector<Mat> processedImageMat = processor.getprocessedImage(skinImageMat);
 
             // create display image
-            QImage binaryImage = processor.convertMatToQImage(processedImageMat[0]);
+            QImage binaryImage = convertMatToQImage(processedImageMat[0]);
             QImage processedImage;
 
             // add points to overlay
@@ -70,15 +73,52 @@ void CameraCapture::run()
 
                 // add overlay
                 Mat processedOverlay = overlay.applyOverlay(processedImageMat[1]);
-                processedImage = processor.convertMatToQImage(processedOverlay);
+                processedImage = convertMatToQImage(processedOverlay);
             }
             else
                 // create display image
-               processedImage = processor.convertMatToQImage(processedImageMat[1]);
+               processedImage = convertMatToQImage(processedImageMat[1]);
 
 
 
             emit(capturedNewFrame(binaryImage, processedImage));
         }
+    }
+}
+
+QImage CameraCapture::convertMatToQImage(Mat mat)
+{
+    // 8-bits unsigned, NO. OF CHANNELS=1
+    if(mat.type()==CV_8UC1)
+    {
+        // Set the color table (used to translate colour indexes to qRgb values)
+        QVector<QRgb> colorTable;
+        for (int i=0; i<256; i++)
+            colorTable.push_back(qRgb(i,i,i));
+        // Copy input Mat
+        const uchar *qImageBuffer = (const uchar*)mat.data;
+        // Create QImage with same dimensions as input Mat
+        QImage img(qImageBuffer, mat.cols, mat.rows, mat.step, QImage::Format_Indexed8);
+        img.setColorTable(colorTable);
+        return img;
+    }
+    // 8-bits unsigned, NO. OF CHANNELS=3
+    if(mat.type() == CV_8UC4)
+    {
+        cvtColor(mat, mat, CV_BGRA2BGR);
+    }
+
+    if(mat.type()==CV_8UC3)
+    {
+        // Copy input Mat
+        const uchar *qImageBuffer = (const uchar*)mat.data;
+        // Create QImage with same dimensions as input Mat
+        QImage img(qImageBuffer, mat.cols, mat.rows, mat.step, QImage::Format_RGB888);
+        return img.rgbSwapped();
+    }
+    else
+    {
+        qDebug() << "ERROR: Mat could not be converted to QImage.";
+        return QImage();
     }
 }

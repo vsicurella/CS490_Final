@@ -50,21 +50,21 @@ public:
     QThread* audioThread;
 
     // Audio parameters
-    int sample_rate;
-    int buffer_size;
+    int sample_rate = 44100;
+    int buffer_size = 256;
 
-    bool isPlaying;
-    float masterVol;
-    float basePitch;
-    int range;
-    int tone;
+    bool isPlaying = true;
+    float masterVol = 1;
+    float basePitch = 110;
+    int range = 3;
+    int tone = 0;
 
-    bool isQuantized;
-    int harmNum;
-    int divisons;
+    bool isQuantized = false;
+    int harmNum = 2;
+    int divisons = 12;
 
-    bool overOn;
-    float overHeight;
+    bool overOn = true;
+    float overHeight = 0.15;
 
     void connectParameters();
 
@@ -74,6 +74,7 @@ public slots:
     void set_volume(float vol);
     void set_pitch(float pitch);
     void set_playing(bool playing);
+    void set_numTone(int num);
     void set_tone(int tn);
     void set_range(int rng);
     void set_quantized(bool quant);

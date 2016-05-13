@@ -1443,8 +1443,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>1009</width>
-           <height>589</height>
+           <width>993</width>
+           <height>605</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -1534,7 +1534,7 @@
                   <number>1000</number>
                  </property>
                  <property name="value">
-                  <number>48000</number>
+                  <number>44100</number>
                  </property>
                 </widget>
                </item>
@@ -1626,6 +1626,64 @@
               </widget>
              </item>
              <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_47">
+               <item>
+                <widget class="QCheckBox" name="isMuted">
+                 <property name="minimumSize">
+                  <size>
+                   <width>200</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Muted</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_29">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>160</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Max Number of Tones:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSpinBox" name="numTones">
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="maximum">
+                  <number>20</number>
+                 </property>
+                 <property name="value">
+                  <number>8</number>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
               <layout class="QHBoxLayout" name="horizontalLayout_33">
                <item>
                 <widget class="QLabel" name="label_12">
@@ -1643,7 +1701,7 @@
                <item>
                 <widget class="QSlider" name="volumeSld">
                  <property name="maximum">
-                  <number>999</number>
+                  <number>1000</number>
                  </property>
                  <property name="singleStep">
                   <number>50</number>
@@ -1652,7 +1710,7 @@
                   <number>100</number>
                  </property>
                  <property name="value">
-                  <number>999</number>
+                  <number>500</number>
                  </property>
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
@@ -1674,7 +1732,7 @@
                   </size>
                  </property>
                  <property name="text">
-                  <string>100%</string>
+                  <string>50%</string>
                  </property>
                 </widget>
                </item>
@@ -1750,31 +1808,18 @@
                 <number>300</number>
                </property>
                <item>
-                <widget class="QCheckBox" name="isMuted">
-                 <property name="minimumSize">
-                  <size>
-                   <width>200</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>100</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string>Muted</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_21">
                  <item>
                   <widget class="QLabel" name="label_22">
+                   <property name="minimumSize">
+                    <size>
+                     <width>122</width>
+                     <height>0</height>
+                    </size>
+                   </property>
                    <property name="maximumSize">
                     <size>
-                     <width>100</width>
+                     <width>0</width>
                      <height>16777215</height>
                     </size>
                    </property>
@@ -1785,6 +1830,12 @@
                  </item>
                  <item>
                   <widget class="QSpinBox" name="rangeBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
                    <property name="maximumSize">
                     <size>
                      <width>100</width>
@@ -2078,6 +2129,9 @@
                </item>
                <item>
                 <widget class="QSlider" name="overlayHeightSld">
+                 <property name="maximum">
+                  <number>100</number>
+                 </property>
                  <property name="value">
                   <number>15</number>
                  </property>

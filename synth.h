@@ -32,9 +32,10 @@ public:
     float frequency;
     float amplitude;
 
-    float masterVolume = 1;
+    float masterVolume = 0.5;
 
     bool playing;
+    bool masterPlaying;
 
     unsigned int waveShape;
     std::vector<float> wavetable;

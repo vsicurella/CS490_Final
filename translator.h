@@ -57,6 +57,10 @@ public:
     // Convert x-value to frequency
     float pointToFrequency(float xcoord);
 
+    float getDegreeFreq(float base, float degree);
+    float getFactor(float interval);
+
+
 public slots:
 
     // main function
